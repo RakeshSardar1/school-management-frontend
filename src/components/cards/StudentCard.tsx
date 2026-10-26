@@ -97,12 +97,6 @@ const StudentCard: React.FC<StudentTypesProps> = ({ student }) => {
         </button>
         <div className="flex items-center gap-2">
           <button
-            // onClick={() =>
-            //   addToast(
-            //     `Notice dispatched to ${student.name}'s guardian`,
-            //     "info",
-            //   )
-            // }
             className="p-2 text-slate-400 hover:text-[#142B4A] hover:bg-white rounded-lg transition-colors border border-transparent hover:border-slate-200"
             title="Send Notification"
           >
