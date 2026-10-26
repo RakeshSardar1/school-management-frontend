@@ -15,10 +15,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import {
-  Users,
-  Receipt,
   CalendarCheck,
-  DollarSign,
   Calendar,
   CreditCard,
   Bell,
@@ -27,6 +24,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import OverView from "./OverView";
+import OverviewCardRow from "./OverviewCardRow";
 const BAR_CHART_DATA = [
   { month: "Jan", fees: 4200, expenses: 3450 },
   { month: "Feb", fees: 4180, expenses: 3480 },
@@ -198,62 +196,7 @@ const MainContent = () => {
         <OverView />
 
         {/* ==================== 4. SUMMARY STATS ROW ==================== */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#142B4A] text-white flex items-center justify-center shrink-0">
-                <Users className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-xs text-slate-500 font-semibold">
-                  Student Count
-                </p>
-                <p className="text-2xl font-black text-[#142B4A] mt-0.5">54</p>
-              </div>
-            </div>
-            <span className="text-xs font-bold text-[#142B4A] bg-slate-100 px-3 py-1 rounded-xl">
-              Active Enrolled
-            </span>
-          </div>
-
-          <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center shrink-0">
-                <DollarSign className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-xs text-slate-500 font-semibold">
-                  Monthly Fees Collection
-                </p>
-                <p className="text-2xl font-black text-[#142B4A] mt-0.5">
-                  $19,350.00
-                </p>
-              </div>
-            </div>
-            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-xl">
-              +14.8%
-            </span>
-          </div>
-
-          <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 border border-rose-200 flex items-center justify-center shrink-0">
-                <Receipt className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-xs text-slate-500 font-semibold">
-                  Monthly Expenses
-                </p>
-                <p className="text-2xl font-black text-[#142B4A] mt-0.5">
-                  $1,250.00
-                </p>
-              </div>
-            </div>
-            <span className="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-xl">
-              Approved
-            </span>
-          </div>
-        </div>
+        <OverviewCardRow />
 
         {/* ==================== 5. MAIN CHARTS SECTION ==================== */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
