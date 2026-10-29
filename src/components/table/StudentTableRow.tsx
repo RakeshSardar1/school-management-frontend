@@ -1,11 +1,14 @@
 import React from "react";
 import type { StudentTypes } from "../../utilities/types";
 import { Eye, Send } from "lucide-react";
+import { useAppDispatch } from "../../redux/ReduxHooks";
+import { viewStudentProfile } from "../../redux/reducers/StudentReducer/StudentReducer";
 
 interface StudentTypesProps {
   student: StudentTypes;
 }
 const StudentTableRow: React.FC<StudentTypesProps> = ({ student }) => {
+  const dispatch = useAppDispatch();
   return (
     <>
       <td className="py-4 px-6">
@@ -16,7 +19,9 @@ const StudentTableRow: React.FC<StudentTypesProps> = ({ student }) => {
             className="w-10 h-10 rounded-full object-cover ring-2 ring-[#D6B36A]"
           />
           <div>
-            <p className="font-bold text-[#142B4A]">{student.name}</p>
+            <p className="font-bold text-[#142B4A] whitespace-nowrap">
+              {student.name}
+            </p>
             <p className="text-xs text-slate-400">{student.gender}</p>
           </div>
         </div>
@@ -27,11 +32,11 @@ const StudentTableRow: React.FC<StudentTypesProps> = ({ student }) => {
         </p>
         <p className="text-xs text-slate-400">Roll: {student.rollNo}</p>
       </td>
-      <td className="py-4 px-6 font-semibold">
+      <td className="whitespace-nowrap py-4 px-6 font-semibold">
         {student.grade} - {student.section}
       </td>
       <td className="py-4 px-6">
-        <span className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-md text-xs font-semibold border border-slate-200">
+        <span className="whitespace-nowrap px-2.5 py-1 bg-slate-100 text-slate-600 rounded-md text-xs font-semibold border border-slate-200">
           {student.category}
         </span>
       </td>
@@ -57,11 +62,13 @@ const StudentTableRow: React.FC<StudentTypesProps> = ({ student }) => {
           {student.feeStatus}
         </span>
       </td>
-      <td className="py-4 px-6 font-mono text-xs">{student.guardianPhone}</td>
+      <td className="whitespace-nowrap py-4 px-6 font-mono text-xs">
+        {student.guardianPhone}
+      </td>
       <td className="py-4 px-6 text-right">
         <div className="flex items-center justify-end gap-2">
           <button
-            // onClick={() => setSelectedStudent(student)}
+            onClick={() => dispatch(viewStudentProfile(student))}
             className="p-2 text-slate-500 hover:text-[#3B82F6] hover:bg-slate-100 rounded-lg transition-colors"
             title="View Full Profile"
           >

@@ -1,14 +1,20 @@
 import { useState } from "react";
-import { useAppSelector } from "../../redux/ReduxHooks";
+import { useAppDispatch, useAppSelector } from "../../redux/ReduxHooks";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import {
+  currentSidebar,
+  currentSubSidebar,
+} from "../../redux/reducers/Common/Common";
 export interface SidebarTypesProps {
   active: boolean;
 }
 const Sidebar: React.FC<SidebarTypesProps> = ({ active = true }) => {
-  const [activeTab, setActiveTab] = useState<string>("overview");
   const [activeSubItem, setActiveSubItem] = useState<string | null>();
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
   const [sidebarCollapsed] = useState<boolean>(false);
+
+  const navigate = useNavigate();
 
   const toggleSubMenu = (menuId: string) => {
     setExpandedMenus((prev) =>
@@ -18,12 +24,16 @@ const Sidebar: React.FC<SidebarTypesProps> = ({ active = true }) => {
     );
   };
 
-  const { sidebarItems } = useAppSelector((state) => state.common);
+  const { sidebarItems, page, subItem } = useAppSelector(
+    (state) => state.common,
+  );
+  const dispatch = useAppDispatch();
+
   return (
     <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1.5 scrollbar-thin scrollbar-thumb-slate-700">
       {sidebarItems.map((item) => {
         const Icon = item.icon;
-        const isActive = activeTab === item.id;
+        const isActive = page === item.id;
         const isExpanded = expandedMenus.includes(item.id);
         const hasSub = Boolean(item.subItems && item.subItems.length > 0);
 
@@ -34,14 +44,17 @@ const Sidebar: React.FC<SidebarTypesProps> = ({ active = true }) => {
           >
             <button
               onClick={() => {
-                setActiveTab(item.id);
+                dispatch(currentSidebar(item.id));
                 if (hasSub) {
                   toggleSubMenu(item.id);
                   if (!activeSubItem && item.subItems) {
-                    setActiveSubItem(item.subItems[0]);
+                    setActiveSubItem(item.subItems[0].id);
                   }
                 } else {
                   setActiveSubItem(null);
+                }
+                if (item.path) {
+                  navigate(item.path);
                 }
               }}
               title={sidebarCollapsed ? item.label : undefined}
@@ -63,7 +76,6 @@ const Sidebar: React.FC<SidebarTypesProps> = ({ active = true }) => {
                   <span className="truncate">{item.label}</span>
                 )}
               </div>
-
               {!sidebarCollapsed && !active && (
                 <div className="flex items-center gap-1.5">
                   {item.badge && (
@@ -90,14 +102,15 @@ const Sidebar: React.FC<SidebarTypesProps> = ({ active = true }) => {
             {/* Expandable Sub-List */}
             {hasSub && isExpanded && !sidebarCollapsed && (
               <div className="ml-4 pl-3 my-1 border-l-2 border-slate-700/60 space-y-1 py-1">
-                {item.subItems?.map((sub) => {
-                  const isSubActive = activeSubItem === sub && isActive;
+                {item.subItems?.map((sub, i) => {
+                  const isSubActive = sub.id == subItem;
                   return (
                     <button
-                      key={sub}
+                      key={i}
                       onClick={() => {
-                        setActiveTab(item.id);
-                        setActiveSubItem(sub);
+                        dispatch(currentSubSidebar(sub.id));
+
+                        setActiveSubItem(sub.id);
                       }}
                       className={`w-full text-left px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all duration-150 flex items-center justify-between ${
                         isSubActive
@@ -105,7 +118,7 @@ const Sidebar: React.FC<SidebarTypesProps> = ({ active = true }) => {
                           : "text-slate-400 hover:text-white hover:bg-slate-800/40"
                       }`}
                     >
-                      <span className="truncate">{sub}</span>
+                      <span className="truncate">{sub.label}</span>
                       {isSubActive && (
                         <span className="w-1.5 h-1.5 rounded-full bg-[#D6B36A]" />
                       )}

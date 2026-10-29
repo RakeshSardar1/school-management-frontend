@@ -57,49 +57,32 @@ import {
   FEES_COLLECTION,
   FEES_COLLECTION_LABEL,
   STUDENT_DIRECTORY,
-  ADMISSION_PROCESS,
-  STUDENT_CATEGORIES,
-  PROMOTE_STUDENTS,
-  EXAM_SCHEDULE,
-  MARKS_REPORT_CARDS,
-  ADMIT_CARDS,
-  GRADE_SETUP,
-  CLASS_TIMETABLE,
-  TEACHER_TIMETABLE,
-  ASSIGN_SUBJECT,
-  SUBJECTS_MASTER,
-  STAFF_DIRECTORY,
-  STAFF_ATTENDANCE,
-  PAYROLL_SALARY,
-  APPROVE_LEAVE,
-  FEE_LEDGER,
-  COLLECT_FEES,
-  FEE_STRUCTURE,
-  DISCOUNT_TYPES,
 } from "../../ConstantCommon";
 
 interface CommonStates {
   menu: string[];
   page: string;
   sidebarItems: SidebarItem[];
+  subItem: string | null;
 }
 
 const initialState: CommonStates = {
   menu: ["Home", "Programs", "Gallery", "Teachers", "Notice", "Contact"],
-  page: "Home",
+  page: "overview",
   sidebarItems: [
-    { id: OVERVIEW, label: SCHOOL_OVERVIEW, icon: Building2 },
+    { id: OVERVIEW, label: SCHOOL_OVERVIEW, icon: Building2, path: "/" },
     { id: FRONT_OFFICE, label: FRONT_OFFICE_LABEL, icon: Wallet },
     {
       id: STUDENT_INFO,
       label: STUDENT_INFO_LABEL,
       icon: Users,
       badge: "54",
+      path: "students",
       subItems: [
-        STUDENT_DIRECTORY,
-        ADMISSION_PROCESS,
-        STUDENT_CATEGORIES,
-        PROMOTE_STUDENTS,
+        { id: "student-directory", label: STUDENT_DIRECTORY },
+        { id: "admission-process", label: "Admission Process" },
+        { id: "student-categories", label: "Student Categories" },
+        { id: "promote-students", label: "Promote Students" },
       ],
     },
     {
@@ -122,9 +105,28 @@ const initialState: CommonStates = {
       label: EXAMINATIONS_LABEL,
       icon: FileText,
       badge: "Active",
-      subItems: [EXAM_SCHEDULE, MARKS_REPORT_CARDS, ADMIT_CARDS, GRADE_SETUP],
+      subItems: [
+        { id: "exam-schedule", label: "Exam Schedule" },
+        { id: "marks-report-cards", label: "Marks & Report Cards" },
+        { id: "admit-cards", label: "Admit Cards" },
+        { id: "grade-setup", label: "Grade Setup" },
+      ],
     },
-    { id: ATTENDANCE, label: ATTENDANCE_LABEL, icon: CalendarCheck },
+    {
+      id: ATTENDANCE,
+      path: "attendances",
+      label: ATTENDANCE_LABEL,
+      icon: CalendarCheck,
+      subItems: [
+        { id: "student-roster", label: "Student Attendance" },
+        { id: "staff-roster", label: "Staff & Teacher Attendance" },
+        { id: "period-roster", label: "Subject / Period Attendance" },
+        { id: "monthly-analytics", label: "Analytics & Monthly Sheet" },
+        { id: "leave-approvals", label: "Leave Requests" },
+        { id: "biometric-log", label: "Biometric / RFID Stream" },
+        { id: "defaulter-list", label: "Defaulter & Low Attendance" },
+      ],
+    },
     {
       id: ONLINE_EXAMS,
       label: ONLINE_EXAMINATIONS,
@@ -134,24 +136,12 @@ const initialState: CommonStates = {
       id: ACADEMICS,
       label: ACADEMICS_LABEL,
       icon: BookMarked,
-      subItems: [
-        CLASS_TIMETABLE,
-        TEACHER_TIMETABLE,
-        ASSIGN_SUBJECT,
-        SUBJECTS_MASTER,
-      ],
     },
     { id: LESSON_PLAN, label: LESSON_PLAN_LABEL, icon: BookOpen },
     {
       id: HR,
       label: HUMAN_RESOURCE,
       icon: UserCheck,
-      subItems: [
-        STAFF_DIRECTORY,
-        STAFF_ATTENDANCE,
-        PAYROLL_SALARY,
-        APPROVE_LEAVE,
-      ],
     },
     { id: COMMUNICATE, label: COMMUNICATE_LABEL, icon: MessageSquare },
     {
@@ -159,20 +149,29 @@ const initialState: CommonStates = {
       label: FEES_COLLECTION_LABEL,
       icon: CreditCard,
       badge: "216",
-      subItems: [FEE_LEDGER, COLLECT_FEES, FEE_STRUCTURE, DISCOUNT_TYPES],
     },
   ],
+  subItem: null,
 };
 
 const CommonSlice = createSlice({
   name: "commonSlice",
   initialState,
   reducers: {
-    currentPage: (state, action: PayloadAction<string>) => {
+    currentSidebar: (state, action: PayloadAction<string>) => {
       state.page = action.payload;
+      const havingSubItem = state.sidebarItems.find(
+        (e) => e.id === action.payload,
+      );
+      if (havingSubItem?.subItems?.length) {
+        // state.subItem = havingSubItem.find(e=> e.)
+      }
+    },
+    currentSubSidebar: (state, action: PayloadAction<string>) => {
+      state.subItem = action.payload;
     },
   },
 });
 
-export const { currentPage } = CommonSlice.actions;
+export const { currentSidebar, currentSubSidebar } = CommonSlice.actions;
 export default CommonSlice.reducer;

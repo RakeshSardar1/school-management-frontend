@@ -1,30 +1,12 @@
 import { CheckCircle2, Sparkles } from "lucide-react";
+import { useAppSelector } from "../../redux/ReduxHooks";
 
 const StudentToast = () => {
+  const { toasts } = useAppSelector((state) => state.toast);
+
   return (
     <div className="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none">
-      {[
-        {
-          id: "1",
-          type: "success",
-          message: "Student admission created successfully",
-        },
-        {
-          id: "2",
-          type: "warning",
-          message: "Student attendance is below 75%",
-        },
-        {
-          id: "3",
-          type: "info",
-          message: "New admission application received",
-        },
-        {
-          id: "4",
-          type: "error",
-          message: "Failed to save student information",
-        },
-      ].map((toast) => (
+      {toasts.map((toast) => (
         <div
           key={toast.id}
           className={`pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-xl text-white font-medium text-sm transition-all transform translate-y-0 ${

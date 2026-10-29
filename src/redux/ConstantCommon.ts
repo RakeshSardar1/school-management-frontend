@@ -9,6 +9,8 @@ export const STUDENT_INFO_LABEL = "Student Info";
 export const STUDENT_DIRECTORY = "Student Directory";
 export const ADMISSION_PROCESS = "Admission Process";
 export const STUDENT_CATEGORIES = "Student Categories";
+export const STUDENT_ADMISSION = "Student Admission";
+
 export const PROMOTE_STUDENTS = "Promote Students";
 
 export const ONLINE_COURSE = "online-course";

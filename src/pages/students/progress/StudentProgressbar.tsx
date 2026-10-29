@@ -1,7 +1,8 @@
 import { NewAdmissionButton } from "../../../components/buttons";
 import { useAppDispatch, useAppSelector } from "../../../redux/ReduxHooks";
+import { currentSubSidebar } from "../../../redux/reducers/Common/Common";
 import { changeProgress } from "../../../redux/reducers/StudentReducer/StudentReducer";
-import type { StudentProgressTab } from "../../../utilities/types";
+import type { StudentTabItem } from "../../../utilities/types";
 
 const StudentProgressbar = () => {
   const dispatch = useAppDispatch();
@@ -9,8 +10,9 @@ const StudentProgressbar = () => {
     (state) => state.student,
   );
 
-  const chooseProgress = (id: StudentProgressTab) => {
-    dispatch(changeProgress(id));
+  const chooseProgress = (tab: StudentTabItem) => {
+    dispatch(changeProgress(tab.id));
+    dispatch(currentSubSidebar(tab.sidebarItemName));
   };
 
   return (
@@ -22,7 +24,7 @@ const StudentProgressbar = () => {
           return (
             <button
               key={tab.id}
-              onClick={() => chooseProgress(tab.id)}
+              onClick={() => chooseProgress(tab)}
               className={`flex items-center gap-2.5 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
                 isActive
                   ? "bg-[#142B4A] text-white shadow-md"

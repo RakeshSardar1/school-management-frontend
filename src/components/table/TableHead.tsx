@@ -18,7 +18,7 @@ const TableHead: React.FC<TableHeadProps> = ({ headers }) => {
         <th
           key={h.key}
           scope="col"
-          className={`py-4 px-6 ${alignClass(h.align)} ${h.className ?? ""}`}
+          className={`whitespace-nowrap py-4 px-6 ${alignClass(h.align)} ${h.className ?? ""}`}
         >
           {h.label}
         </th>

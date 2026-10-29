@@ -3,19 +3,23 @@ import { StudentDrawer } from "../../layouts/Drawer";
 import StudentHeader from "./StudentHeader";
 import StudentProgressbar from "./progress/StudentProgressbar";
 
-import { StudentAdmissionModal } from "../../layouts/Modal";
 import { StudentToast } from "../../layouts";
 import { useAppSelector } from "../../redux/ReduxHooks";
 import StudentProgressHOD from "./StudentProgressHOD";
+import { StudentAdmissionModal } from "../../layouts/Modal";
+import { STUDENT_ADMISSION } from "../../redux/ConstantCommon";
 
 export default function StudentOverview() {
   // Navigation & Active Sub-Tab
-  const { studentsProgress } = useAppSelector((state) => state.student);
+  const { studentsProgress, viewStudentProfile, studentsDirectory } =
+    useAppSelector((state) => state.student);
+
+  const { triggerModal, activeModal } = useAppSelector((state) => state.modal);
 
   return (
     <>
       {/* Toast System */}
-      {false && <StudentToast />}
+      {viewStudentProfile && <StudentToast />}
 
       {/* SIDEBAR NAVIGATION */}
 
@@ -33,10 +37,12 @@ export default function StudentOverview() {
       </div>
 
       {/* STUDENT PROFILE SLIDE-OUT DRAWER */}
-      {false && <StudentDrawer />}
+      {viewStudentProfile && <StudentDrawer student={viewStudentProfile} />}
 
       {/* NEW ADMISSION MODAL */}
-      {false && <StudentAdmissionModal />}
+      {activeModal && triggerModal === STUDENT_ADMISSION && (
+        <StudentAdmissionModal students={studentsDirectory} />
+      )}
     </>
   );
 }

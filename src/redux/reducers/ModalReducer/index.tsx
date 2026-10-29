@@ -1,3 +1,3 @@
-import OverviewReducer from "./ModalReducer";
+import ModalReducer from "./ModalReducer";
 
-export { OverviewReducer };
+export { ModalReducer };

@@ -1,11 +1,14 @@
 import { Edit3, Eye, Send } from "lucide-react";
 import type { StudentTypes } from "../../utilities/types";
+import { viewStudentProfile } from "../../redux/reducers/StudentReducer/StudentReducer";
+import { useAppDispatch } from "../../redux/ReduxHooks";
 
 interface StudentTypesProps {
   student: StudentTypes;
 }
 
 const StudentCard: React.FC<StudentTypesProps> = ({ student }) => {
+  const dispatch = useAppDispatch();
   return (
     <>
       <div className="p-6">
@@ -92,7 +95,10 @@ const StudentCard: React.FC<StudentTypesProps> = ({ student }) => {
       </div>
       {/* Card Actions Footer */}
       <div className="bg-slate-50 px-6 py-3 border-t border-slate-100 flex items-center justify-between">
-        <button className="flex items-center gap-1.5 text-xs font-semibold text-[#3B82F6] hover:text-blue-800 transition-colors">
+        <button
+          onClick={() => dispatch(viewStudentProfile(student))}
+          className="flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-[#3B82F6] hover:text-blue-800 transition-colors"
+        >
           <Eye className="w-4 h-4" /> Full Profile
         </button>
         <div className="flex items-center gap-2">

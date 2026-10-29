@@ -1,5 +1,10 @@
 import { combineReducers } from "@reduxjs/toolkit";
-import { CommonSlice, StudentReducer } from "./reducers";
+import {
+  CommonSlice,
+  ModalReducer,
+  StudentReducer,
+  StudentToastReducer,
+} from "./reducers";
 import { authSlice } from "./reducers/Auth";
 import { OverviewReducer } from "./reducers/OverviewReducer";
 import { FiltersReducer, StudentFiltersReducer } from "./reducers/Filters";
@@ -15,6 +20,8 @@ const rootReducer = combineReducers({
   overView: OverviewReducer,
   student: StudentReducer,
   filter: filters,
+  toast: StudentToastReducer,
+  modal: ModalReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

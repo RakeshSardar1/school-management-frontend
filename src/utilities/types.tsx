@@ -8,7 +8,12 @@ export interface SidebarItem {
   label: string;
   icon: ElementType;
   badge?: string;
-  subItems?: string[];
+  subItems?: SubItems[];
+  path?: string;
+}
+export interface SubItems {
+  id: string;
+  label: string;
 }
 
 export interface Metric {
@@ -30,6 +35,21 @@ export interface CardItemRowOverviewTypes {
   badgeBg: string;
   badgeColor: string;
 }
+
+//Toast
+export type ToastType = "success" | "warning" | "info" | "error";
+
+export interface Toast {
+  id: string;
+  type: ToastType;
+  message: string;
+}
+export interface ToastConfig {
+  bg: string;
+  icon: LucideIcon;
+  iconClass: string;
+}
+export type ToastMap = Record<ToastType, ToastConfig>;
 
 //Filters
 export interface StudentDataTypesProps {
@@ -76,6 +96,7 @@ export interface StudentTabItem {
   id: StudentProgressTab;
   label: string;
   icon: LucideIcon;
+  sidebarItemName: string;
 }
 
 export type StudentStatus = "Active" | "On Leave" | "Overdue";

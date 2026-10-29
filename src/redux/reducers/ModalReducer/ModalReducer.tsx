@@ -12,8 +12,8 @@ const initialState: CommonStates = {
   activeModal: false,
 };
 
-const OverviewReducer = createSlice({
-  name: "OverviewReducer",
+const ModalReducer = createSlice({
+  name: "ModalReducer",
   initialState,
   reducers: {
     chooseModal: (state, action: PayloadAction<string>) => {
@@ -27,5 +27,5 @@ const OverviewReducer = createSlice({
   },
 });
 
-export const { chooseModal, closeModal } = OverviewReducer.actions;
-export default OverviewReducer.reducer;
+export const { chooseModal, closeModal } = ModalReducer.actions;
+export default ModalReducer.reducer;

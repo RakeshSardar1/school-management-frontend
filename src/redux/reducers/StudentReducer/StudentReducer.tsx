@@ -8,28 +8,47 @@ import type {
   StudentTabItem,
   StudentTypes,
 } from "../../../utilities/types";
+import {
+  ADMISSION_PROCESS,
+  PROMOTE_STUDENTS,
+  STUDENT_CATEGORIES,
+  STUDENT_DIRECTORY,
+} from "../../ConstantCommon";
 
 interface InitialStates {
-  triggerModal: string | null;
-  activeModal: boolean;
   studentsProgress: StudentProgressTab;
   studentProgressBar: StudentTabItem[];
   studentsDirectory: StudentTypes[];
+  viewStudentProfile: StudentTypes | null;
 }
 
 const initialState: InitialStates = {
-  triggerModal: null,
-  activeModal: false,
   studentsProgress: "directory",
   studentProgressBar: [
-    { id: "directory", label: "Student Directory", icon: Users },
-    { id: "pipeline", label: "Admission Pipeline", icon: UserPlus },
+    {
+      id: "directory",
+      label: "Student Directory",
+      icon: Users,
+      sidebarItemName: STUDENT_DIRECTORY,
+    },
+    {
+      id: "pipeline",
+      label: "Admission Pipeline",
+      icon: UserPlus,
+      sidebarItemName: ADMISSION_PROCESS,
+    },
     {
       id: "categories",
       label: "Demographics & Stats",
       icon: PieChartIcon,
+      sidebarItemName: STUDENT_CATEGORIES,
     },
-    { id: "promote", label: "Batch Promotion", icon: RefreshCw },
+    {
+      id: "promote",
+      label: "Batch Promotion",
+      icon: RefreshCw,
+      sidebarItemName: PROMOTE_STUDENTS,
+    },
   ],
   studentsDirectory: [
     {
@@ -165,6 +184,7 @@ const initialState: InitialStates = {
       admissionDate: "2019-08-12",
     },
   ],
+  viewStudentProfile: null,
 };
 
 const StudentReducer = createSlice({
@@ -174,8 +194,11 @@ const StudentReducer = createSlice({
     changeProgress: (state, action: PayloadAction<StudentProgressTab>) => {
       state.studentsProgress = action.payload;
     },
+    viewStudentProfile: (state, action: PayloadAction<StudentTypes | null>) => {
+      state.viewStudentProfile = action.payload;
+    },
   },
 });
 
-export const { changeProgress } = StudentReducer.actions;
+export const { changeProgress, viewStudentProfile } = StudentReducer.actions;
 export default StudentReducer.reducer;
