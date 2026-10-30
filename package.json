@@ -11,9 +11,12 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.13.0",
+    "@supabase/supabase-js": "^2.118.0",
     "@tailwindcss/vite": "^4.3.3",
     "axios": "^1.20.0",
     "clsx": "^2.1.1",
+    "firebase": "^13.1.0",
+    "firebase-admin": "^14.5.0",
     "framer-motion": "^14.6.0",
     "lucide-react": "^1.61.0",
     "react": "^19.3.1",
@@ -45,5 +48,18 @@
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.71.2",
     "vite": "^8.3.4"
-  }
+  },
+  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
+  "main": "eslint.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RakeshSardar1/school-management-frontend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RakeshSardar1/school-management-frontend/issues"
+  },
+  "homepage": "https://github.com/RakeshSardar1/school-management-frontend#readme"
 }

@@ -99,8 +99,6 @@ export interface StudentTabItem {
   sidebarItemName: string;
 }
 
-export type StudentStatus = "Active" | "On Leave" | "Overdue";
-
 export type StudentGender = "Male" | "Female" | "Other" | "Not specified";
 
 export type StudentFeeStatus = "Paid" | "Partial" | "Pending" | "Overdue";
@@ -129,4 +127,59 @@ export interface StudentTypes {
   bloodGroup: string;
   address: string;
   admissionDate: string;
+}
+
+//Attandences
+export type StudentStatus =
+  | "Present"
+  | "Late"
+  | "Absent"
+  | "Half Day"
+  | "On Leave";
+export type StaffStatus = "Present" | "Late" | "Absent" | "On Leave";
+export type PeriodStatus = "P" | "L" | "A";
+export type LeaveStatus = "Approved" | "Pending" | "Rejected";
+
+//Stuffs
+
+export type UserRole =
+  | "student"
+  | "teacher"
+  | "staff"
+  | "guard"
+  | "admin"
+  | "driver"
+  | "librarian"
+  | "counselor"
+  | "nurse"
+  | "accountant";
+
+export type ShiftType =
+  | "Morning"
+  | "Evening"
+  | "Night"
+  | "General"
+  | "Rotational";
+
+export type EmploymentType =
+  | "Full-Time"
+  | "Part-Time"
+  | "Contract"
+  | "Intern"
+  | "Volunteer";
+
+export type GateStatus = "On Time" | "Late" | "Early Exit" | "Missed";
+
+export interface Staff {
+  id: string;
+  empCode: string;
+  name: string;
+  dept: string;
+  role: string;
+  avatar: string;
+  status: StaffStatus;
+  clockIn: string;
+  clockOut: string;
+  shift: string;
+  monthlyRate: string;
 }

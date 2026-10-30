@@ -12,15 +12,7 @@ import {
   Building2,
   Users,
   GraduationCap,
-  BookOpen,
-  Tv,
-  GitFork,
-  Video,
-  Smile,
-  Receipt,
-  FileCheck2,
   CalendarCheck,
-  Laptop,
   BookMarked,
   FileText,
   UserCheck,
@@ -28,26 +20,13 @@ import {
   CreditCard,
   Search,
   X,
-  Send,
   ChevronRight,
-  ShieldCheck,
   Sparkles,
   Wallet,
-  CheckCircle2,
-  Clock,
-  AlertTriangle,
   Download,
-  RefreshCw,
-  UserX,
-  Award,
   Zap,
   Briefcase,
   Book,
-  Check,
-  SlidersHorizontal,
-  ChevronDown,
-  PhoneCall,
-  User,
   type LucideIcon,
 } from "lucide-react";
 
@@ -636,6 +615,20 @@ const Attendances = () => {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-800 font-sans flex overflow-x-hidden selection:bg-[#3B82F6] selection:text-white">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 bg-[#142B4A] text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-[#D6B36A]/40 flex items-center gap-3.5 animate-in fade-in slide-in-from-bottom-5 duration-300">
+          <div className="w-8 h-8 rounded-xl bg-[#D6B36A] text-[#142B4A] flex items-center justify-center shrink-0 font-bold">
+            <Sparkles className="w-4 h-4" />
+          </div>
+          <div>
+            <p className="text-xs font-bold text-[#D6B36A] tracking-wide">
+              Scholix System Notification
+            </p>
+            <p className="text-[11px] text-slate-200">{toastMessage}</p>
+          </div>
+        </div>
+      )}
       {/* ==================== MAIN CONTENT CANVAS ==================== */}
       <main className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC]">
         {/* Top App Header */}

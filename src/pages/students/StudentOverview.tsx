@@ -27,7 +27,6 @@ export default function StudentOverview() {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* TOP HEADER */}
         <StudentHeader />
-
         {/* MAIN MODULE CONTENT AREA */}
         <main className="flex-1 overflow-y-auto bg-[#F8FAFC] p-8 space-y-6">
           <StudentProgressbar />
