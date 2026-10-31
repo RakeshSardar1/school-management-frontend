@@ -1,3 +1,4 @@
+import * as LucideIcons from "lucide-react";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/ReduxHooks";
 import { ChevronDown, ChevronRight } from "lucide-react";
@@ -6,9 +7,11 @@ import {
   currentSidebar,
   currentSubSidebar,
 } from "../../redux/reducers/Common/Common";
+
 export interface SidebarTypesProps {
   active: boolean;
 }
+
 const Sidebar: React.FC<SidebarTypesProps> = ({ active = true }) => {
   const [activeSubItem, setActiveSubItem] = useState<string | null>();
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
@@ -32,10 +35,13 @@ const Sidebar: React.FC<SidebarTypesProps> = ({ active = true }) => {
   return (
     <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1.5 scrollbar-thin scrollbar-thumb-slate-700">
       {sidebarItems.map((item) => {
-        const Icon = item.icon;
         const isActive = page === item.id;
         const isExpanded = expandedMenus.includes(item.id);
         const hasSub = Boolean(item.subItems && item.subItems.length > 0);
+
+        const Icon = LucideIcons[
+          item.icon as keyof typeof LucideIcons
+        ] as React.ElementType;
 
         return (
           <div
@@ -65,13 +71,15 @@ const Sidebar: React.FC<SidebarTypesProps> = ({ active = true }) => {
               }`}
             >
               <div className="flex items-center gap-3 min-w-0">
-                <Icon
-                  className={`w-4 h-4 shrink-0 transition-transform duration-200 group-hover:scale-110 ${
-                    isActive
-                      ? "text-[#D6B36A]"
-                      : "text-slate-400 group-hover:text-slate-200"
-                  }`}
-                />
+                {Icon && (
+                  <Icon
+                    className={`w-4 h-4 shrink-0 transition-transform duration-200 group-hover:scale-110 ${
+                      isActive
+                        ? "text-[#D6B36A]"
+                        : "text-slate-400 group-hover:text-slate-200"
+                    }`}
+                  />
+                )}
                 {!sidebarCollapsed && (
                   <span className="truncate">{item.label}</span>
                 )}
@@ -109,7 +117,6 @@ const Sidebar: React.FC<SidebarTypesProps> = ({ active = true }) => {
                       key={i}
                       onClick={() => {
                         dispatch(currentSubSidebar(sub.id));
-
                         setActiveSubItem(sub.id);
                       }}
                       className={`w-full text-left px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all duration-150 flex items-center justify-between ${

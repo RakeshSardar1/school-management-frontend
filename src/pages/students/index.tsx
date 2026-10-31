@@ -4,4 +4,4 @@ export { default as StudentPipeline } from "./progress/StudentPipeline";
 
 export { default as StudentCategory } from "./progress/StudentCategory";
 export { default as StudentPromote } from "./progress/StudentPromote";
-export { default as StudentProgressHOD } from "./StudentProgressHOD";
+export { default as StudentProgressHOC } from "./StudentProgressHOC";

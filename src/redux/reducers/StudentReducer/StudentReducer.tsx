@@ -2,7 +2,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-import { PieChartIcon, RefreshCw, UserPlus, Users } from "lucide-react";
 import type {
   StudentProgressTab,
   StudentTabItem,
@@ -27,27 +26,27 @@ const initialState: InitialStates = {
   studentProgressBar: [
     {
       id: "directory",
-      label: "Student Directory",
-      icon: Users,
-      sidebarItemName: STUDENT_DIRECTORY,
+      label: STUDENT_DIRECTORY,
+      icon: "Users",
+      sidebarItemName: "Student Directory",
     },
     {
       id: "pipeline",
-      label: "Admission Pipeline",
-      icon: UserPlus,
-      sidebarItemName: ADMISSION_PROCESS,
+      label: ADMISSION_PROCESS,
+      icon: "UserPlus",
+      sidebarItemName: "Admission Process",
     },
     {
       id: "categories",
-      label: "Demographics & Stats",
-      icon: PieChartIcon,
-      sidebarItemName: STUDENT_CATEGORIES,
+      label: STUDENT_CATEGORIES,
+      icon: "PieChart",
+      sidebarItemName: "Student Categories",
     },
     {
       id: "promote",
-      label: "Batch Promotion",
-      icon: RefreshCw,
-      sidebarItemName: PROMOTE_STUDENTS,
+      label: PROMOTE_STUDENTS,
+      icon: "RefreshCw",
+      sidebarItemName: "Promote Students",
     },
   ],
   studentsDirectory: [

@@ -35,6 +35,6 @@ function StudentProgressShell({ children }: ShellProps) {
   return <>{children}</>;
 }
 
-const StudentProgressHOD = withStudentData(StudentProgressShell);
+const StudentProgressHOC = withStudentData(StudentProgressShell);
 
-export default StudentProgressHOD;
+export default StudentProgressHOC;

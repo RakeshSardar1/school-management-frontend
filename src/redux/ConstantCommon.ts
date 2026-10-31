@@ -1,3 +1,6 @@
+//UserAccess
+export const SUPER_ADMIN = "super_admin";
+
 export const OVERVIEW = "overview";
 export const SCHOOL_OVERVIEW = "School Overview";
 
@@ -70,3 +73,26 @@ export const FEE_LEDGER = "Fee Ledger";
 export const COLLECT_FEES = "Collect Fees";
 export const FEE_STRUCTURE = "Fee Structure";
 export const DISCOUNT_TYPES = "Discount Types";
+
+//Sidebar
+export const SIDEBAR_API = {
+  GET_ALL: "sidebar?select=*",
+};
+
+export const USERS_CATEGORY = [
+  "super_admin",
+  "admin",
+  "management",
+  "principal",
+  "teacher",
+  "student",
+  "parent",
+  "clerk",
+  "accountant",
+  "librarian",
+  "maintenance",
+  "security",
+  "canteen",
+  "transport",
+  "it_support",
+];

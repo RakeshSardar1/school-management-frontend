@@ -1,0 +1,1 @@
+export { AccessHOC } from "./AccessHOC";

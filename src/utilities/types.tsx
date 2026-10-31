@@ -1,19 +1,35 @@
 // Overview
 
 import type { LucideIcon } from "lucide-react";
-import type { ElementType } from "react";
+
+//Active
+export type UserActiveTypes = "Active" | "Not Active";
+
+// Auth State Interface
+export interface AuthStateTypes {
+  isAuthenticated: boolean;
+  user: UserCategory | null;
+  accessToken: string | null;
+  refreshToken: string | null;
+  isLoading: boolean;
+  error: string | null;
+  token?: string | null;
+  successMessage?: string | null;
+}
 
 export interface SidebarItem {
   id: string;
   label: string;
-  icon: ElementType;
+  icon: string;
   badge?: string;
   subItems?: SubItems[];
   path?: string;
+  allowedCategories: UserCategory[];
 }
 export interface SubItems {
   id: string;
   label: string;
+  allowedCategories: UserCategory[];
 }
 
 export interface Metric {
@@ -95,7 +111,7 @@ export type StudentProgressTab = (typeof STUDENT_TAB_IDS)[number];
 export interface StudentTabItem {
   id: StudentProgressTab;
   label: string;
-  icon: LucideIcon;
+  icon: string;
   sidebarItemName: string;
 }
 
@@ -114,7 +130,7 @@ export interface StudentTypes {
   gender: StudentGender;
   category: string;
 
-  status: StudentStatus;
+  status: UserActiveTypes;
 
   guardianName: string;
   guardianPhone: string;
@@ -170,16 +186,51 @@ export type EmploymentType =
 
 export type GateStatus = "On Time" | "Late" | "Early Exit" | "Missed";
 
-export interface Staff {
+export type UserCategory =
+  | "super_admin"
+  | "admin"
+  | "management"
+  | "principal"
+  | "teacher"
+  | "student"
+  | "parent"
+  | "clerk"
+  | "accountant"
+  | "librarian"
+  | "maintenance"
+  | "security"
+  | "canteen"
+  | "transport"
+  | "it_support";
+
+export type UserRankTypes =
+  | "super_admin" // System owner
+  | "admin" // School Admin
+  | "principal" // Head of school
+  | "vice_principal"
+  | "hod" // Head of Department
+  | "senior_staff"
+  | "junior_staff"
+  | "intern" // Lowest staff level
+  | "guest"
+  | "parent";
+
+export interface UserTypes {
   id: string;
-  empCode: string;
+  distributorId: string;
   name: string;
-  dept: string;
-  role: string;
-  avatar: string;
-  status: StaffStatus;
-  clockIn: string;
-  clockOut: string;
-  shift: string;
-  monthlyRate: string;
+  email: string;
+  password?: string;
+  phone?: string;
+  avatar?: string;
+  role: UserRole;
+  category: UserCategory;
+  rank: UserRankTypes;
+  sponsorId?: string;
+  joinDate: Date | string;
+  isActive: boolean;
+  isVerified: boolean;
+  lastLogin?: Date | string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
 }

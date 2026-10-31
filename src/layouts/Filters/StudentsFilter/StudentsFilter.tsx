@@ -1,19 +1,68 @@
 import { LayoutGrid, List, Search } from "lucide-react";
-import { useState } from "react";
+
 import { useAppDispatch, useAppSelector } from "../../../redux/ReduxHooks";
 import { changeViewMode } from "../../../redux/reducers/Filters/StudentFiltersReducer";
-const StudentsFilter = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterGrade, setFilterGrade] = useState("All");
-  const [filterSection, setFilterSection] = useState("All");
-  const [filterCategory, setFilterCategory] = useState("All");
-  const [filterStatus, setFilterStatus] = useState("All");
+import type { StudentTypes } from "../../../utilities/types";
+import { useStudentHooks } from "../../../customHooks";
 
+interface StudentTypesProps {
+  students: StudentTypes[];
+}
+
+// ✅ Typed Const for Options
+interface FilterOptions {
+  grades: string[];
+  sections: string[];
+  categories: string[];
+  statuses: string[];
+}
+
+const FILTER_OPTIONS: FilterOptions = {
+  grades: ["All Grades", "Grade 9", "Grade 10", "Grade 11", "Grade 12"],
+  sections: ["All Sections", "Section A", "Section B", "Section C"],
+  categories: [
+    "All Categories",
+    "General",
+    "OBC",
+    "SC/ST",
+    "International",
+    "Sports Quota",
+  ],
+  statuses: ["All Statuses", "Active", "On Leave", "Overdue Fees"],
+};
+
+const StudentsFilter: React.FC<StudentTypesProps> = () => {
   const dispatch = useAppDispatch();
+
+  const {
+    searchQuery,
+    setSearchQuery,
+    filterGrade,
+    setFilterGrade,
+    filterSection,
+    setFilterSection,
+    filterCategory,
+    setFilterCategory,
+    filterStatus,
+    setFilterStatus,
+  } = useStudentHooks();
 
   const { studentViewMode } = useAppSelector(
     (state) => state.filter.studentsFilter,
   );
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const searchValue = event.target.value;
+    setSearchQuery(searchValue);
+  };
+
+  const resetBtn = () => {
+    setSearchQuery("");
+    setFilterGrade("All");
+    setFilterSection("All");
+    setFilterCategory("All");
+    setFilterStatus("All");
+  };
 
   return (
     <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
@@ -25,7 +74,7 @@ const StudentsFilter = () => {
             type="text"
             placeholder="Search by student name, roll number, or admission ID..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearch}
             className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
           />
         </div>
@@ -48,7 +97,10 @@ const StudentsFilter = () => {
               <List className="w-4 h-4" />
             </button>
           </div>
-          <button className="px-3 py-2 text-xs text-slate-500 hover:text-slate-800 font-medium border border-slate-200 rounded-xl hover:bg-slate-50">
+          <button
+            onClick={resetBtn}
+            className="px-3 py-2 text-xs text-slate-500 hover:text-slate-800 font-medium border border-slate-200 rounded-xl hover:bg-slate-50"
+          >
             Reset Filters
           </button>
         </div>
@@ -65,11 +117,11 @@ const StudentsFilter = () => {
             onChange={(e) => setFilterGrade(e.target.value)}
             className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 pr-3 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
           >
-            <option value="All">All Grades</option>
-            <option value="Grade 9">Grade 9</option>
-            <option value="Grade 10">Grade 10</option>
-            <option value="Grade 11">Grade 11</option>
-            <option value="Grade 12">Grade 12</option>
+            {FILTER_OPTIONS.grades.map((grade: string, idx: number) => (
+              <option key={idx} value={idx === 0 ? "All" : grade}>
+                {grade}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -82,10 +134,14 @@ const StudentsFilter = () => {
             onChange={(e) => setFilterSection(e.target.value)}
             className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
           >
-            <option value="All">All Sections</option>
-            <option value="A">Section A</option>
-            <option value="B">Section B</option>
-            <option value="C">Section C</option>
+            {FILTER_OPTIONS.sections.map((section: string, idx: number) => (
+              <option
+                key={idx}
+                value={idx === 0 ? "All" : section.replace("Section ", "")}
+              >
+                {section}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -98,12 +154,11 @@ const StudentsFilter = () => {
             onChange={(e) => setFilterCategory(e.target.value)}
             className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
           >
-            <option value="All">All Categories</option>
-            <option value="General">General</option>
-            <option value="OBC">OBC</option>
-            <option value="SC/ST">SC/ST</option>
-            <option value="International">International</option>
-            <option value="Sports Quota">Sports Quota</option>
+            {FILTER_OPTIONS.categories.map((category: string, idx: number) => (
+              <option key={idx} value={idx === 0 ? "All" : category}>
+                {category}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -116,10 +171,11 @@ const StudentsFilter = () => {
             onChange={(e) => setFilterStatus(e.target.value)}
             className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
           >
-            <option value="All">All Statuses</option>
-            <option value="Active">Active</option>
-            <option value="On Leave">On Leave</option>
-            <option value="Overdue">Overdue Fees</option>
+            {FILTER_OPTIONS.statuses.map((status: string, idx: number) => (
+              <option key={idx} value={idx === 0 ? "All" : status}>
+                {status}
+              </option>
+            ))}
           </select>
         </div>
       </div>

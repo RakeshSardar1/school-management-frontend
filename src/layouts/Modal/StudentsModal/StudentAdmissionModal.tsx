@@ -1,13 +1,14 @@
-import { X } from "lucide-react";
-import type { StudentTypes } from "../../../utilities/types";
+import type { StudentGender, StudentTypes } from "../../../utilities/types";
 import { closeModal } from "../../../redux/reducers/ModalReducer/ModalReducer";
 import { useAppDispatch } from "../../../redux/ReduxHooks";
+import { Icons } from "../../../components";
 
 interface StudentTypesProps {
   students: StudentTypes[];
 }
 const StudentAdmissionModal: React.FC<StudentTypesProps> = ({ students }) => {
   const dispatch = useAppDispatch();
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
       <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-6 animate-in fade-in zoom-in duration-200">
@@ -24,40 +25,40 @@ const StudentAdmissionModal: React.FC<StudentTypesProps> = ({ students }) => {
             onClick={() => dispatch(closeModal())}
             className="text-slate-400 hover:text-slate-600"
           >
-            <X className="w-5 h-5" />
+            <Icons name="X" className="w-5 h-5" />
           </button>
         </div>
 
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            // const formData = new FormData(e.currentTarget);
-            // const newStu: StudentTypes = {
-            //   id: `STU-2026-00${students.length + 1}`,
-            //   admissionNo: `ADM-${Math.floor(1000 + Math.random() * 9000)}`,
-            //   rollNo: `${100 + students.length + 1}`,
-            //   name: String(formData.get("name") ?? ""),
-            //   avatar:
-            //     "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-            //   grade: String(formData.get("grade") ?? ""),
-            //   section: String(formData.get("section") ?? ""),
-            //   gender: formData.get("gender") as StudentGender,
-            //   category: String(formData.get("category") ?? ""),
-            //   status: "Active",
-            //   guardianName: String(formData.get("guardianName") ?? ""),
-            //   guardianPhone: String(formData.get("guardianPhone") ?? ""),
-            //   guardianEmail: String(
-            //     formData.get("guardianEmail") || "parent@example.com",
-            //   ),
-            //   attendance: 100,
-            //   feeStatus: "Paid",
-            //   dob: String(formData.get("dob") || "2010-01-01"),
-            //   bloodGroup: "O+",
-            //   address: "Main Street, Campus District",
-            //   admissionDate: new Date().toISOString().split("T")[0],
-            // };
+            const formData = new FormData(e.currentTarget);
+            const newStudentRegistration: StudentTypes = {
+              id: `STU-2026-00${students.length + 1}`,
+              admissionNo: `ADM-${Math.floor(1000 + Math.random() * 9000)}`,
+              rollNo: `${100 + students.length + 1}`,
+              name: String(formData.get("name") ?? ""),
+              avatar:
+                "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+              grade: String(formData.get("grade") ?? ""),
+              section: String(formData.get("section") ?? ""),
+              gender: formData.get("gender") as StudentGender,
+              category: String(formData.get("category") ?? ""),
+              status: "Active",
+              guardianName: String(formData.get("guardianName") ?? ""),
+              guardianPhone: String(formData.get("guardianPhone") ?? ""),
+              guardianEmail: String(
+                formData.get("guardianEmail") || "parent@example.com",
+              ),
+              attendance: 100,
+              feeStatus: "Paid",
+              dob: String(formData.get("dob") || "2010-01-01"),
+              bloodGroup: "O+",
+              address: "Main Street, Campus District",
+              admissionDate: new Date().toISOString().split("T")[0],
+            };
 
-            // setIsAdmissionModalOpen(false);
+            setIsAdmissionModalOpen(false);
             // addToast(
             //   `Student ${newStu.name} admitted successfully!`,
             //   "success",

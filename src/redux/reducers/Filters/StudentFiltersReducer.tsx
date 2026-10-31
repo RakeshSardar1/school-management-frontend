@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { StudentTypes, ViewModeTypes } from "../../../utilities/types";
+import type { ViewModeTypes } from "../../../utilities/types";
 
 export interface StudentFiltersState {
   studentViewMode: ViewModeTypes;

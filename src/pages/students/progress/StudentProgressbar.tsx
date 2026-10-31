@@ -1,14 +1,23 @@
-import { NewAdmissionButton } from "../../../components/buttons";
 import { useAppDispatch, useAppSelector } from "../../../redux/ReduxHooks";
 import { currentSubSidebar } from "../../../redux/reducers/Common/Common";
 import { changeProgress } from "../../../redux/reducers/StudentReducer/StudentReducer";
 import type { StudentTabItem } from "../../../utilities/types";
+import { STUDENT_ADMISSION } from "../../../redux/ConstantCommon";
+import { useStudentHooks } from "../../../customHooks";
+import { CommonActionButton, Icons } from "../../../components";
 
 const StudentProgressbar = () => {
   const dispatch = useAppDispatch();
   const { studentsProgress, studentProgressBar } = useAppSelector(
     (state) => state.student,
   );
+
+  const { setTriggerModal, setActiveModal } = useStudentHooks();
+
+  const handleNewStudent = () => {
+    setTriggerModal(STUDENT_ADMISSION);
+    setActiveModal(true);
+  };
 
   const chooseProgress = (tab: StudentTabItem) => {
     dispatch(changeProgress(tab.id));
@@ -19,7 +28,6 @@ const StudentProgressbar = () => {
     <div className="flex items-center justify-between border-b border-slate-200 pb-4">
       <div className="flex items-center gap-2 bg-slate-200/60 p-1 rounded-xl">
         {studentProgressBar.map((tab) => {
-          const Icon = tab.icon;
           const isActive = studentsProgress === tab.id;
           return (
             <button
@@ -31,7 +39,8 @@ const StudentProgressbar = () => {
                   : "text-slate-600 hover:text-[#142B4A] hover:bg-slate-200/80"
               }`}
             >
-              <Icon
+              <Icons
+                name={tab.icon}
                 className={`w-4 h-4 ${isActive ? "text-[#D6B36A]" : "text-slate-500"}`}
               />
               {tab.label}
@@ -39,7 +48,13 @@ const StudentProgressbar = () => {
           );
         })}
       </div>
-      {studentsProgress === "directory" && <NewAdmissionButton />}
+      {studentsProgress === "directory" && (
+        <CommonActionButton
+          btnName="New Admission"
+          onClick={handleNewStudent}
+          icon="UserPlus"
+        />
+      )}
     </div>
   );
 };

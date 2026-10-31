@@ -1,8 +1,13 @@
 import axios from "axios";
+const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
 const Api = () => {
   const instance = axios.create({
-    baseURL: "http://localhost:3000/api/",
+    baseURL: "https://vmxqppikwqssxqtquedo.supabase.co/rest/v1/",
+    headers: {
+      apikey: supabaseKey,
+      "Content-Type": "application/json",
+    },
   });
 
   return instance;

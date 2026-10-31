@@ -614,7 +614,7 @@ const Attendances = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-800 font-sans flex overflow-x-hidden selection:bg-[#3B82F6] selection:text-white">
+    <>
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#142B4A] text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-[#D6B36A]/40 flex items-center gap-3.5 animate-in fade-in slide-in-from-bottom-5 duration-300">
@@ -1456,7 +1456,7 @@ const Attendances = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

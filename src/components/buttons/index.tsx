@@ -1,1 +1,1 @@
-export { default as NewAdmissionButton } from "./NewAdmissionButton";
+export { default as CommonActionButton } from "./CommonActionButton";

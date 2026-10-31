@@ -6,19 +6,21 @@ import type {
   StudentsFilterStateTypes,
   StudentTypes,
 } from "../../../utilities/types";
+import { useStudentHooks } from "../../../customHooks";
 
 const StudentDirectory = () => {
   // ── Selectors ──
+  const { studentViewMode } = useAppSelector(
+    (state) => state.filter.studentsFilter as StudentsFilterStateTypes,
+  );
+
   const {
-    studentViewMode,
     searchQuery,
     filterGrade,
     filterSection,
     filterCategory,
     filterStatus,
-  } = useAppSelector(
-    (state) => state.filter.studentsFilter as StudentsFilterStateTypes,
-  );
+  } = useStudentHooks();
 
   const { studentsDirectory } = useAppSelector((state) => state.student);
 
@@ -70,7 +72,7 @@ const StudentDirectory = () => {
   return (
     <div className="space-y-6">
       {/* FILTERS & SEARCH TOOLBAR */}
-      <StudentsFilter />
+      <StudentsFilter students={studentsDirectory} />
 
       {/* RESULT SUMMARY */}
       <div className="text-xs text-slate-500">

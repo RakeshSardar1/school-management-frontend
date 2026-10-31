@@ -9,7 +9,7 @@ const SidebarList = () => {
     <aside
       className={`${
         sidebarCollapsed ? "w-20" : "w-64"
-      } transition-all duration-300 bg-[#142B4A] text-white flex flex-col justify-between shrink-0 sticky top-0 h-screen z-30 shadow-xl`}
+      }  transition-all duration-300 bg-[#142B4A] text-white flex flex-col justify-between shrink-0 sticky top-0 h-screen z-30 shadow-xl`}
     >
       <div className="flex flex-col h-full overflow-hidden">
         {/* Logo Bar */}
