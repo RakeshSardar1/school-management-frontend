@@ -3,10 +3,15 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 import type {
+  PipeLineLeadsTypes,
+  ProgressKeysTypes,
+  StageMeta,
+  StudentAdmissionInProgress,
   StudentProgressTab,
   StudentTabItem,
   StudentTypes,
 } from "../../../utilities/types";
+
 import {
   ADMISSION_PROCESS,
   PROMOTE_STUDENTS,
@@ -14,11 +19,16 @@ import {
   STUDENT_DIRECTORY,
 } from "../../ConstantCommon";
 
+import { findExistingUser } from "../../../utilities/Helpers/findExistingUser";
+
 interface InitialStates {
   studentsProgress: StudentProgressTab;
   studentProgressBar: StudentTabItem[];
   studentsDirectory: StudentTypes[];
   viewStudentProfile: StudentTypes | null;
+  progressPipeLine: StageMeta[];
+  pipelineLeads: PipeLineLeadsTypes[];
+  admissionInProgress: StudentAdmissionInProgress[];
 }
 
 const initialState: InitialStates = {
@@ -71,6 +81,7 @@ const initialState: InitialStates = {
       bloodGroup: "O+",
       address: "742 Evergreen Terrace, Springfield",
       admissionDate: "2021-08-15",
+      registrationProgress: true,
     },
     {
       id: "STU-2026-002",
@@ -93,6 +104,7 @@ const initialState: InitialStates = {
       bloodGroup: "A+",
       address: "128 Beacon St, Boston, MA",
       admissionDate: "2022-01-10",
+      registrationProgress: true,
     },
     {
       id: "STU-2026-003",
@@ -105,7 +117,7 @@ const initialState: InitialStates = {
       section: "B",
       gender: "Male",
       category: "Sports Quota",
-      status: "On Leave",
+      status: "Not Active",
       guardianName: "Helena Thorne",
       guardianPhone: "+1 (555) 345-6789",
       guardianEmail: "helena.t@example.com",
@@ -115,6 +127,7 @@ const initialState: InitialStates = {
       bloodGroup: "B+",
       address: "450 Ocean Drive, Miami, FL",
       admissionDate: "2021-08-15",
+      registrationProgress: false,
     },
     {
       id: "STU-2026-004",
@@ -137,6 +150,7 @@ const initialState: InitialStates = {
       bloodGroup: "AB+",
       address: "88 Lincoln Blvd, Chicago, IL",
       admissionDate: "2023-08-20",
+      registrationProgress: true,
     },
     {
       id: "STU-2026-005",
@@ -149,7 +163,7 @@ const initialState: InitialStates = {
       section: "C",
       gender: "Male",
       category: "General",
-      status: "Overdue",
+      status: "Not Active",
       guardianName: "Sean O'Connor",
       guardianPhone: "+1 (555) 567-8901",
       guardianEmail: "s.oconnor@example.com",
@@ -159,6 +173,7 @@ const initialState: InitialStates = {
       bloodGroup: "O-",
       address: "12 Pinehurst Ave, Seattle, WA",
       admissionDate: "2020-09-01",
+      registrationProgress: false,
     },
     {
       id: "STU-2026-006",
@@ -181,9 +196,130 @@ const initialState: InitialStates = {
       bloodGroup: "A-",
       address: "505 Sunset Blvd, Los Angeles, CA",
       admissionDate: "2019-08-12",
+      registrationProgress: true,
     },
   ],
   viewStudentProfile: null,
+  progressPipeLine: [
+    {
+      key: "applied",
+      label: "1. Applied",
+      color: "border-t-slate-400",
+      icon: "Calendar",
+    },
+    {
+      key: "doc_verification",
+      label: "2. Doc Verification",
+      color: "border-t-blue-500",
+      icon: "Calendar",
+    },
+    {
+      key: "entrance_test",
+      label: "3. Entrance Test",
+      color: "border-t-amber-500",
+      icon: "Calendar",
+    },
+    {
+      key: "fee_paid",
+      label: "4. Fee Paid",
+      color: "border-t-purple-500",
+      icon: "CircleCheck",
+    },
+    {
+      key: "enrolled",
+      label: "5. Fully Enrolled",
+      color: "border-t-emerald-500",
+      icon: "FileCheck",
+    },
+  ],
+  pipelineLeads: [
+    {
+      id: "ADM-LEAD-01",
+      name: "Lucas Scott",
+      grade: "Grade 9",
+      parent: "Karen Scott",
+      phone: "+1 555-0192",
+      stage: "applied",
+      date: "2026-10-20",
+
+      admissionNo: "ADM-1234",
+      section: "Section A",
+      gender: "Male",
+      category: "General",
+      guardianName: "Karen Scott",
+      guardianPhone: "+1 555-0192",
+      dob: "2011-04-12",
+    },
+    {
+      id: "ADM-LEAD-02",
+      name: "Maya Lin",
+      grade: "Grade 10",
+      parent: "Kevin Lin",
+      phone: "+1 555-0193",
+      stage: "doc_verification",
+      date: "2026-10-21",
+
+      admissionNo: "ADM-5678",
+      section: "Section B",
+      gender: "Female",
+      category: "OBC",
+      guardianName: "Kevin Lin",
+      guardianPhone: "+1 555-0193",
+      dob: "2010-08-25",
+    },
+    {
+      id: "ADM-LEAD-03",
+      name: "Ethan Harper",
+      grade: "Grade 11",
+      parent: "Sarah Harper",
+      phone: "+1 555-0194",
+      stage: "entrance_test",
+      date: "2026-10-18",
+
+      admissionNo: "ADM-9012",
+      section: "Section A",
+      gender: "Male",
+      category: "General",
+      guardianName: "Sarah Harper",
+      guardianPhone: "+1 555-0194",
+      dob: "2009-11-03",
+    },
+    {
+      id: "ADM-LEAD-04",
+      name: "Isabella Rossi",
+      grade: "Grade 9",
+      parent: "Marco Rossi",
+      phone: "+1 555-0195",
+      stage: "fee_paid",
+      date: "2026-10-22",
+
+      admissionNo: "ADM-3456",
+      section: "Section C",
+      gender: "Female",
+      category: "SC/ST",
+      guardianName: "Marco Rossi",
+      guardianPhone: "+1 555-0195",
+      dob: "2011-02-14",
+    },
+    {
+      id: "ADM-LEAD-05",
+      name: "Gabriel Santos",
+      grade: "Grade 12",
+      parent: "Maria Santos",
+      phone: "+1 555-0196",
+      stage: "enrolled",
+      date: "2026-10-15",
+
+      admissionNo: "ADM-7890",
+      section: "Section B",
+      gender: "Male",
+      category: "General",
+      guardianName: "Maria Santos",
+      guardianPhone: "+1 555-0196",
+      dob: "2008-06-30",
+    },
+  ],
+  admissionInProgress: [],
 };
 
 const StudentReducer = createSlice({
@@ -196,8 +332,36 @@ const StudentReducer = createSlice({
     viewStudentProfile: (state, action: PayloadAction<StudentTypes | null>) => {
       state.viewStudentProfile = action.payload;
     },
+    admissionnewStudent: (
+      state,
+      action: PayloadAction<StudentAdmissionInProgress>,
+    ) => {
+      const userExist = findExistingUser(
+        state.admissionInProgress,
+        action.payload,
+        ["fullName", "dateOfBirth"],
+      );
+      if (!userExist) {
+        state.admissionInProgress.push(action.payload);
+      }
+    },
+    movePipelineStage: (
+      state,
+      action: PayloadAction<{ leadId: string; nextStage: ProgressKeysTypes }>,
+    ) => {
+      const { leadId, nextStage } = action.payload;
+
+      state.pipelineLeads = state.pipelineLeads.map((l) =>
+        l.id === leadId ? { ...l, stage: nextStage } : l,
+      );
+    },
   },
 });
 
-export const { changeProgress, viewStudentProfile } = StudentReducer.actions;
+export const {
+  changeProgress,
+  viewStudentProfile,
+  admissionnewStudent,
+  movePipelineStage,
+} = StudentReducer.actions;
 export default StudentReducer.reducer;

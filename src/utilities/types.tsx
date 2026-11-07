@@ -1,151 +1,67 @@
-// Overview
+// ============================================================
+// OVERVIEW
+// ============================================================
 
-import type { LucideIcon } from "lucide-react";
+// ============================================================
+// 🔹 BASIC PRIMITIVES & UNIONS
+// ============================================================
 
-//Active
+// Active status
 export type UserActiveTypes = "Active" | "Not Active";
 
-// Auth State Interface
-export interface AuthStateTypes {
-  isAuthenticated: boolean;
-  user: UserCategory | null;
-  accessToken: string | null;
-  refreshToken: string | null;
-  isLoading: boolean;
-  error: string | null;
-  token?: string | null;
-  successMessage?: string | null;
-}
-
-export interface SidebarItem {
-  id: string;
-  label: string;
-  icon: string;
-  badge?: string;
-  subItems?: SubItems[];
-  path?: string;
-  allowedCategories: UserCategory[];
-}
-export interface SubItems {
-  id: string;
-  label: string;
-  allowedCategories: UserCategory[];
-}
-
-export interface Metric {
-  id: number;
-  headText: string;
-  fraction: [number, number, string];
-  statusRing: boolean;
-  ringColor?: string;
-}
-
-export interface CardItemRowOverviewTypes {
-  id: string;
-  title: string;
-  value: string;
-  icon: LucideIcon;
-  iconBg: string;
-  iconColor: string;
-  badge: string;
-  badgeBg: string;
-  badgeColor: string;
-}
-
-//Toast
-export type ToastType = "success" | "warning" | "info" | "error";
-
-export interface Toast {
-  id: string;
-  type: ToastType;
-  message: string;
-}
-export interface ToastConfig {
-  bg: string;
-  icon: LucideIcon;
-  iconClass: string;
-}
-export type ToastMap = Record<ToastType, ToastConfig>;
-
-//Filters
-export interface StudentDataTypesProps {
-  filteredStudents: StudentTypes[];
-}
-export interface TableHeader {
-  key: string;
-  label: string;
-  align: "left" | "center" | "right";
-  className?: string;
-}
-export const STUDENT_TABLE_HEADERS: TableHeader[] = [
-  { key: "name", label: "Student Name", align: "left" },
-  { key: "admissionRoll", label: "Admission / Roll", align: "left" },
-  { key: "gradeSection", label: "Grade & Sec", align: "left" },
-  { key: "category", label: "Category", align: "left" },
-  { key: "attendance", label: "Attendance", align: "left" },
-  { key: "feeStatus", label: "Fee Status", align: "left" },
-  { key: "guardianPhone", label: "Guardian Phone", align: "left" },
-  { key: "actions", label: "Actions", align: "right" },
-];
-
-export interface StudentsFilterStateTypes {
-  studentViewMode: "grid" | "table";
-  searchQuery: string;
-  filterGrade: string;
-  filterSection: string;
-  filterCategory: string;
-  filterStatus: string;
-}
-
-//Student Types
-export type ViewModeTypes = "grid" | "table";
-export const STUDENT_TAB_IDS = [
-  "directory",
-  "pipeline",
-  "categories",
-  "promote",
-] as const;
-
-export type StudentProgressTab = (typeof STUDENT_TAB_IDS)[number];
-
-export interface StudentTabItem {
-  id: StudentProgressTab;
-  label: string;
-  icon: string;
-  sidebarItemName: string;
-}
-
+// Gender
 export type StudentGender = "Male" | "Female" | "Other" | "Not specified";
 
+//Blood
+export type BloodType = "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-";
+
+// Fee
 export type StudentFeeStatus = "Paid" | "Partial" | "Pending" | "Overdue";
 
-export interface StudentTypes {
-  id: string;
-  admissionNo: string;
-  rollNo: string;
-  name: string;
-  avatar?: string;
-  grade: string;
-  section: string;
-  gender: StudentGender;
-  category: string;
+export type StaffGradeShort = (typeof GRADES_DATA)[number];
 
-  status: UserActiveTypes;
+export const GRADES_DATA = [
+  "Grader 1",
+  "Grader 2",
+  "Grader 3",
+  "Grader 4",
+  "Grader 5",
+  "Grader 6",
+  "Grader 7",
+  "Grader 8",
+  "Grader 9",
+  "Grader 10",
+  "Grader 11",
+  "Grader 12",
+];
 
-  guardianName: string;
-  guardianPhone: string;
-  guardianEmail: string;
+// Admission progress
+export type ProgressKeysTypes =
+  | "applied"
+  | "doc_verification"
+  | "entrance_test"
+  | "fee_paid"
+  | "enrolled";
 
-  attendance: number;
-  feeStatus: StudentFeeStatus;
+export type RegistrationStatus =
+  | "Applied"
+  | "Document Verification"
+  | "Entrance Test"
+  | "Fee Paid"
+  | "Fully Enrolled";
 
-  dob: string;
-  bloodGroup: string;
-  address: string;
-  admissionDate: string;
-}
+// Stages
+export type StageStatus =
+  | "pending"
+  | "active"
+  | "completed"
+  | "skipped"
+  | "failed";
 
-//Attandences
+// View
+export type ViewModeTypes = "grid" | "table";
+
+// Attendance
 export type StudentStatus =
   | "Present"
   | "Late"
@@ -156,8 +72,17 @@ export type StaffStatus = "Present" | "Late" | "Absent" | "On Leave";
 export type PeriodStatus = "P" | "L" | "A";
 export type LeaveStatus = "Approved" | "Pending" | "Rejected";
 
-//Stuffs
+export type StaffOfferStatus =
+  | "Not Issued"
+  | "Issued"
+  | "Signed & Attested"
+  | "Awaiting Attestation"
+  | "Declined";
 
+// Toast
+export type ToastType = "success" | "warning" | "info" | "error";
+
+// User roles & categories
 export type UserRole =
   | "student"
   | "teacher"
@@ -204,16 +129,31 @@ export type UserCategory =
   | "it_support";
 
 export type UserRankTypes =
-  | "super_admin" // System owner
-  | "admin" // School Admin
-  | "principal" // Head of school
+  | "super_admin"
+  | "admin"
+  | "principal"
   | "vice_principal"
-  | "hod" // Head of Department
+  | "hod"
   | "senior_staff"
   | "junior_staff"
-  | "intern" // Lowest staff level
+  | "intern"
   | "guest"
   | "parent";
+
+// ============================================================
+// 🔹 AUTH
+// ============================================================
+
+export interface AuthStateTypes {
+  isAuthenticated: boolean;
+  user: UserCategory | null;
+  accessToken: string | null;
+  refreshToken: string | null;
+  isLoading: boolean;
+  error: string | null;
+  token?: string | null;
+  successMessage?: string | null;
+}
 
 export interface UserTypes {
   id: string;
@@ -233,4 +173,222 @@ export interface UserTypes {
   lastLogin?: Date | string;
   createdAt: Date | string;
   updatedAt: Date | string;
+}
+
+// ============================================================
+// 🔹 SIDEBAR & NAVIGATION
+// ============================================================
+
+export interface SubItems {
+  id: string;
+  label: string;
+  allowedCategories: UserCategory[];
+  path?: string;
+}
+
+export interface SidebarItem {
+  id: string;
+  label: string;
+  icon: string;
+  badge?: string;
+  subItems?: SubItems[];
+  path?: string;
+  allowedCategories: UserCategory[];
+}
+
+// ============================================================
+// 🔹 METRICS & DASHBOARD CARDS
+// ============================================================
+
+export interface Metric {
+  id: number;
+  headText: string;
+  fraction: [number, number, string];
+  statusRing: boolean;
+  ringColor?: string;
+}
+
+export interface CardItemRowOverviewTypes {
+  id: string;
+  title: string;
+  value: string;
+  icon: string;
+  iconBg: string;
+  iconColor: string;
+  badge: string;
+  badgeBg: string;
+  badgeColor: string;
+}
+
+// ============================================================
+// 🔹 TOAST
+// ============================================================
+
+export interface Toast {
+  id: string;
+  type: ToastType;
+  message: string;
+}
+
+export interface ToastConfig {
+  bg: string;
+  icon: string;
+  iconClass: string;
+}
+
+export type ToastMap = Record<ToastType, ToastConfig>;
+
+// ============================================================
+// 🔹 STUDENT TABLE & FILTERS
+// ============================================================
+
+export interface TableHeader {
+  key: string;
+  label: string;
+  align: "left" | "center" | "right";
+  className?: string;
+}
+
+export const STUDENT_TABLE_HEADERS: TableHeader[] = [
+  { key: "name", label: "Student Name", align: "left" },
+  { key: "admissionRoll", label: "Admission / Roll", align: "left" },
+  { key: "gradeSection", label: "Grade & Sec", align: "left" },
+  { key: "category", label: "Category", align: "left" },
+  { key: "attendance", label: "Attendance", align: "left" },
+  { key: "feeStatus", label: "Fee Status", align: "left" },
+  { key: "guardianPhone", label: "Guardian Phone", align: "left" },
+  { key: "actions", label: "Actions", align: "right" },
+];
+
+export interface StudentsFilterStateTypes {
+  studentViewMode: "grid" | "table";
+  searchQuery: string;
+  filterGrade: string;
+  filterSection: string;
+  filterCategory: string;
+  filterStatus: string;
+}
+
+export interface StudentDataTypesProps {
+  filteredStudents: StudentTypes[];
+}
+
+// ============================================================
+// 🔹 STUDENT TABS
+// ============================================================
+
+export const STUDENT_TAB_IDS = [
+  "directory",
+  "pipeline",
+  "categories",
+  "promote",
+] as const;
+
+export type StudentProgressTab = (typeof STUDENT_TAB_IDS)[number];
+
+export interface StudentTabItem {
+  id: StudentProgressTab;
+  label: string;
+  icon: string;
+  sidebarItemName: string;
+}
+
+// ============================================================
+// 🔹 STUDENT STAGES
+// ============================================================
+
+export interface StageMeta {
+  key: string;
+  label: string;
+  color: string;
+  icon: string;
+}
+
+// ============================================================
+// 🔹 STUDENT MODELS
+// ============================================================
+
+// In-progress (form submission payload)
+export interface StudentAdmissionInProgress {
+  fullName: string;
+  targetGrade: string;
+  assignedSection: string;
+  gender: "Male" | "Female" | "Other";
+  category: string;
+  guardianName: string;
+  emergencyContactPhone: string;
+  dateOfBirth: string | null;
+}
+
+// Registration-in-progress (newer used shape)
+export interface StudentRegistrationInProgress {
+  id: string;
+  name: string;
+  grade: string;
+  gender: StudentGender;
+  admissionNo: string;
+  section: string;
+  guardianPhone: string;
+  dob: string;
+  category: string;
+  guardianName: string;
+}
+
+// Lead / pipeline record
+export interface PipeLineLeadsTypes extends StudentRegistrationInProgress {
+  parent: string;
+  phone: string;
+  stage: ProgressKeysTypes;
+  date: string;
+}
+
+// Fully enrolled student
+export interface StudentTypes {
+  id: string;
+  admissionNo: string;
+  rollNo: string;
+  name: string;
+  avatar?: string;
+  grade: string;
+  section: string;
+  gender: StudentGender;
+  category: string;
+
+  status: UserActiveTypes;
+
+  guardianName: string;
+  guardianPhone: string;
+  guardianEmail: string;
+
+  attendance: number;
+  feeStatus: StudentFeeStatus;
+
+  dob: string;
+  bloodGroup: string;
+  address: string;
+  admissionDate: string;
+  registrationProgress: boolean;
+  verificationStage?: RegistrationStatus;
+}
+
+//Staffs
+
+export interface StaffDrawerViewModel {
+  id: string;
+  name: string;
+  role: UserRole; // from your types.ts
+  post: string;
+  grade: StaffGradeShort; // "Grade A" | "Grade B" | "Grade C"
+  salary: string; // display string: "$78,000 / yr"
+  offerStatus: StaffOfferStatus;
+}
+
+// Education and Experience
+
+export interface IndianQualification {
+  level: number;
+  qualification: string;
+  duration: string;
+  entryRequirement: string;
+  isDegree: boolean;
 }

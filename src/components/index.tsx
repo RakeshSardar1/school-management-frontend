@@ -3,3 +3,7 @@ export { StudentGrid } from "./grid";
 export { StudentsTable, StudentTableRow, TableHead } from "./table";
 export { Icons } from "./icons";
 export { CommonActionButton } from "./buttons";
+export { Avatar } from "./avatar";
+export { FilterDropDown } from "./dropdown";
+export { DateMonthYearProps } from "./moment";
+export { NavigationLink } from "./navigation";

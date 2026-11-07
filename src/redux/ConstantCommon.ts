@@ -1,3 +1,5 @@
+import type { IndianQualification } from "../utilities/types";
+
 //UserAccess
 export const SUPER_ADMIN = "super_admin";
 
@@ -79,7 +81,42 @@ export const SIDEBAR_API = {
   GET_ALL: "sidebar?select=*",
 };
 
-export const USERS_CATEGORY = [
+//Sutdents Section
+export const GENDER_DATA = ["Male", "Female", "Other", "Not specified"];
+
+export const GRADES_DATA = [
+  "Grader 1",
+  "Grader 2",
+  "Grader 3",
+  "Grader 4",
+  "Grader 5",
+  "Grader 6",
+  "Grader 7",
+  "Grader 8",
+  "Grader 9",
+  "Grader 10",
+  "Grader 11",
+  "Grader 12",
+];
+
+export const SECTIONS_DATA = [
+  "Section A",
+  "Section B",
+  "Section C",
+  "Section D",
+  "Section E",
+  "Section F",
+];
+
+export const CATEGORIES_DATA = [
+  "General",
+  "OBC",
+  "SC/ST",
+  "International",
+  "Sports Quota",
+];
+
+export const USERS_CATEGORY: string[] = [
   "super_admin",
   "admin",
   "management",
@@ -95,4 +132,218 @@ export const USERS_CATEGORY = [
   "canteen",
   "transport",
   "it_support",
+];
+
+export const INDIAN_QUALIFICATIONS: IndianQualification[] = [
+  // ---- No formal education ----
+  {
+    level: 1,
+    qualification: "Not Educated",
+    duration: "—",
+    entryRequirement: "—",
+    isDegree: false,
+  },
+
+  // ---- School levels ----
+  {
+    level: 2,
+    qualification: "Class 4 Pass",
+    duration: "—",
+    entryRequirement: "Class 3",
+    isDegree: false,
+  },
+  {
+    level: 3,
+    qualification: "Class 8 Pass",
+    duration: "—",
+    entryRequirement: "Class 7",
+    isDegree: false,
+  },
+  {
+    level: 4,
+    qualification: "Class 10 Pass (Secondary School Certificate)",
+    duration: "—",
+    entryRequirement: "Class 9",
+    isDegree: false,
+  },
+  {
+    level: 5,
+    qualification:
+      "Class 12 Pass (Higher Secondary / Senior Secondary Certificate)",
+    duration: "—",
+    entryRequirement: "Class 11",
+    isDegree: false,
+  },
+
+  // ---- Vocational / diploma ----
+  {
+    level: 6,
+    qualification: "ITI Pass (Industrial Training Institute)",
+    duration: "6 months – 2 years",
+    entryRequirement: "Class 8 or Class 10 pass",
+    isDegree: false,
+  },
+  {
+    level: 7,
+    qualification: "Polytechnic Diploma",
+    duration: "2 – 3 years",
+    entryRequirement: "Class 10 or Class 12 pass",
+    isDegree: false,
+  },
+  {
+    level: 8,
+    qualification: "Postgraduate Diploma (PG Diploma)",
+    duration: "1 – 2 years",
+    entryRequirement: "Bachelor's degree",
+    isDegree: false,
+  },
+
+  // ---- Undergraduate degrees ----
+  {
+    level: 9,
+    qualification: "Bachelor of Arts (BA)",
+    duration: "3 years",
+    entryRequirement: "Class 12 pass",
+    isDegree: true,
+  },
+  {
+    level: 9,
+    qualification: "Bachelor of Science (B.Sc.)",
+    duration: "3 years",
+    entryRequirement: "Class 12 pass (Science stream)",
+    isDegree: true,
+  },
+  {
+    level: 9,
+    qualification: "Bachelor of Commerce (B.Com.)",
+    duration: "3 years",
+    entryRequirement: "Class 12 pass (Commerce stream preferred)",
+    isDegree: true,
+  },
+  {
+    level: 9,
+    qualification: "Bachelor of Business Administration (BBA)",
+    duration: "3 years",
+    entryRequirement: "Class 12 pass + entrance exam",
+    isDegree: true,
+  },
+  {
+    level: 9,
+    qualification: "Bachelor of Computer Applications (BCA)",
+    duration: "3 years",
+    entryRequirement: "Class 12 pass (Maths preferred)",
+    isDegree: true,
+  },
+  {
+    level: 10,
+    qualification: "Bachelor of Technology (B.Tech)",
+    duration: "4 years",
+    entryRequirement: "Class 12 pass (PCM) + JEE / entrance exam",
+    isDegree: true,
+  },
+  {
+    level: 10,
+    qualification: "Bachelor of Engineering (B.E.)",
+    duration: "4 years",
+    entryRequirement: "Class 12 pass (PCM) + entrance exam",
+    isDegree: true,
+  },
+  {
+    level: 10,
+    qualification: "Bachelor of Architecture (B.Arch)",
+    duration: "5 years",
+    entryRequirement: "Class 12 pass + NATA / JEE Paper 2",
+    isDegree: true,
+  },
+  {
+    level: 10,
+    qualification: "Bachelor of Laws (LLB)",
+    duration: "3 – 5 years",
+    entryRequirement: "Class 12 pass or Bachelor's degree + CLAT / entrance",
+    isDegree: true,
+  },
+  {
+    level: 10,
+    qualification: "Bachelor of Medicine, Bachelor of Surgery (MBBS)",
+    duration: "5.5 years (incl. internship)",
+    entryRequirement: "Class 12 pass (PCB) + NEET",
+    isDegree: true,
+  },
+  {
+    level: 11,
+    qualification: "Bachelor's Degree (Honours)",
+    duration: "3 – 4 years",
+    entryRequirement: "Class 12 pass (higher cutoff)",
+    isDegree: true,
+  },
+
+  // ---- Postgraduate degrees ----
+  {
+    level: 12,
+    qualification: "Master of Arts (MA)",
+    duration: "2 years",
+    entryRequirement: "Bachelor's degree (BA preferred)",
+    isDegree: true,
+  },
+  {
+    level: 12,
+    qualification: "Master of Science (M.Sc.)",
+    duration: "2 years",
+    entryRequirement: "Bachelor's degree (B.Sc. preferred)",
+    isDegree: true,
+  },
+  {
+    level: 12,
+    qualification: "Master of Commerce (M.Com.)",
+    duration: "2 years",
+    entryRequirement: "Bachelor's degree (B.Com. preferred)",
+    isDegree: true,
+  },
+  {
+    level: 12,
+    qualification: "Master of Business Administration (MBA)",
+    duration: "2 years",
+    entryRequirement: "Bachelor's degree + CAT / MAT / entrance",
+    isDegree: true,
+  },
+  {
+    level: 12,
+    qualification: "Master of Computer Applications (MCA)",
+    duration: "2 years",
+    entryRequirement: "Bachelor's degree (BCA / Maths preferred) + entrance",
+    isDegree: true,
+  },
+  {
+    level: 13,
+    qualification: "Master of Technology (M.Tech)",
+    duration: "2 years",
+    entryRequirement: "B.Tech / B.E. + GATE",
+    isDegree: true,
+  },
+  {
+    level: 13,
+    qualification: "Master of Laws (LLM)",
+    duration: "1 – 2 years",
+    entryRequirement: "LLB + entrance exam",
+    isDegree: true,
+  },
+
+  // ---- Pre-doctoral ----
+  {
+    level: 14,
+    qualification: "Master of Philosophy (M.Phil.) — being phased out",
+    duration: "1 – 2 years",
+    entryRequirement: "Master's degree",
+    isDegree: true,
+  },
+
+  // ---- Doctoral ----
+  {
+    level: 15,
+    qualification: "Doctor of Philosophy (Ph.D.)",
+    duration: "3+ years",
+    entryRequirement:
+      "Master's degree (55%+) or 4-yr Bachelor's (75%+) + UGC-NET/entrance",
+    isDegree: true,
+  },
 ];

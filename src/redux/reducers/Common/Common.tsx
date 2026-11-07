@@ -168,10 +168,19 @@ const initialState: CommonStates = {
       ],
     },
     {
-      id: "academics",
-      label: "Academics",
-      icon: "BookMarked",
+      id: "staffs-overview",
+      label: "Staffs",
+      icon: "IdCard",
+      path: "staffs",
       allowedCategories: ["admin", "management", "principal", "teacher"],
+      subItems: [
+        {
+          id: "employee-onboarding",
+          label: "Employee Onboarding",
+          path: "employee-onboarding",
+          allowedCategories: ["admin", "management", "principal"],
+        },
+      ],
     },
     {
       id: "lesson-plan",

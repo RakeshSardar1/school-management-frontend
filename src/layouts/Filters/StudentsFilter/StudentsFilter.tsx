@@ -4,12 +4,18 @@ import { useAppDispatch, useAppSelector } from "../../../redux/ReduxHooks";
 import { changeViewMode } from "../../../redux/reducers/Filters/StudentFiltersReducer";
 import type { StudentTypes } from "../../../utilities/types";
 import { useStudentHooks } from "../../../customHooks";
+import { FilterDropDown } from "../../../components";
+import {
+  CATEGORIES_DATA,
+  GRADES_DATA,
+  SECTIONS_DATA,
+} from "../../../redux/ConstantCommon";
+import { formatOptions } from "../../../utilities/Helpers/converter";
 
 interface StudentTypesProps {
   students: StudentTypes[];
 }
 
-// ✅ Typed Const for Options
 interface FilterOptions {
   grades: string[];
   sections: string[];
@@ -18,16 +24,9 @@ interface FilterOptions {
 }
 
 const FILTER_OPTIONS: FilterOptions = {
-  grades: ["All Grades", "Grade 9", "Grade 10", "Grade 11", "Grade 12"],
-  sections: ["All Sections", "Section A", "Section B", "Section C"],
-  categories: [
-    "All Categories",
-    "General",
-    "OBC",
-    "SC/ST",
-    "International",
-    "Sports Quota",
-  ],
+  grades: ["All Grades", ...GRADES_DATA],
+  sections: ["All Sections", ...SECTIONS_DATA],
+  categories: ["All Categories", ...CATEGORIES_DATA],
   statuses: ["All Statuses", "Active", "On Leave", "Overdue Fees"],
 };
 
@@ -57,6 +56,7 @@ const StudentsFilter: React.FC<StudentTypesProps> = () => {
   };
 
   const resetBtn = () => {
+    dispatch(changeViewMode("grid"));
     setSearchQuery("");
     setFilterGrade("All");
     setFilterSection("All");
@@ -64,6 +64,9 @@ const StudentsFilter: React.FC<StudentTypesProps> = () => {
     setFilterStatus("All");
   };
 
+  // Helper function to convert string array to DropdownOption array
+  // It also handles converting the first item's value to "All" to match your redux logic
+  // console.log(FILTER_OPTIONS.statuses);
   return (
     <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
@@ -84,14 +87,14 @@ const StudentsFilter: React.FC<StudentTypesProps> = () => {
           <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
             <button
               onClick={() => dispatch(changeViewMode("grid"))}
-              className={`p-2 rounded-lg transition-all ${studentViewMode === "grid" ? "bg-white text-[#142B4A] shadow-xs" : "text-slate-400 hover:text-slate-600"}`}
+              className={`p-2 cursor-pointer rounded-lg transition-all ${studentViewMode === "grid" ? "bg-white text-[#142B4A] shadow-xs" : "text-slate-400 hover:text-slate-600"}`}
               title="Grid View"
             >
               <LayoutGrid className="w-4 h-4" />
             </button>
             <button
               onClick={() => dispatch(changeViewMode("table"))}
-              className={`p-2 rounded-lg transition-all ${studentViewMode === "table" ? "bg-white text-[#142B4A] shadow-xs" : "text-slate-400 hover:text-slate-600"}`}
+              className={`p-2 cursor-pointer rounded-lg transition-all ${studentViewMode === "table" ? "bg-white text-[#142B4A] shadow-xs" : "text-slate-400 hover:text-slate-600"}`}
               title="Table View"
             >
               <List className="w-4 h-4" />
@@ -99,7 +102,7 @@ const StudentsFilter: React.FC<StudentTypesProps> = () => {
           </div>
           <button
             onClick={resetBtn}
-            className="px-3 py-2 text-xs text-slate-500 hover:text-slate-800 font-medium border border-slate-200 rounded-xl hover:bg-slate-50"
+            className="px-3 cursor-pointer py-2 text-xs text-slate-500 hover:text-slate-800 font-medium border border-slate-200 rounded-xl hover:bg-slate-50"
           >
             Reset Filters
           </button>
@@ -108,76 +111,33 @@ const StudentsFilter: React.FC<StudentTypesProps> = () => {
 
       {/* Filter Dropdowns */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2 border-t border-slate-100">
-        <div>
-          <label className="text-xs font-semibold text-slate-500 mb-1 block">
-            Grade / Class
-          </label>
-          <select
-            value={filterGrade}
-            onChange={(e) => setFilterGrade(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 pr-3 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
-          >
-            {FILTER_OPTIONS.grades.map((grade: string, idx: number) => (
-              <option key={idx} value={idx === 0 ? "All" : grade}>
-                {grade}
-              </option>
-            ))}
-          </select>
-        </div>
+        <FilterDropDown
+          label="Grade / Class"
+          options={formatOptions(FILTER_OPTIONS.grades)}
+          value={filterGrade}
+          onChange={setFilterGrade}
+        />
 
-        <div>
-          <label className="text-xs font-semibold text-slate-500 mb-1 block">
-            Section
-          </label>
-          <select
-            value={filterSection}
-            onChange={(e) => setFilterSection(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
-          >
-            {FILTER_OPTIONS.sections.map((section: string, idx: number) => (
-              <option
-                key={idx}
-                value={idx === 0 ? "All" : section.replace("Section ", "")}
-              >
-                {section}
-              </option>
-            ))}
-          </select>
-        </div>
+        <FilterDropDown
+          label="Section"
+          options={formatOptions(FILTER_OPTIONS.sections)}
+          value={filterSection}
+          onChange={setFilterSection}
+        />
 
-        <div>
-          <label className="text-xs font-semibold text-slate-500 mb-1 block">
-            Category
-          </label>
-          <select
-            value={filterCategory}
-            onChange={(e) => setFilterCategory(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
-          >
-            {FILTER_OPTIONS.categories.map((category: string, idx: number) => (
-              <option key={idx} value={idx === 0 ? "All" : category}>
-                {category}
-              </option>
-            ))}
-          </select>
-        </div>
+        <FilterDropDown
+          label="Category"
+          options={formatOptions(FILTER_OPTIONS.categories)}
+          value={filterCategory}
+          onChange={setFilterCategory}
+        />
 
-        <div>
-          <label className="text-xs font-semibold text-slate-500 mb-1 block">
-            Academic Status
-          </label>
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
-          >
-            {FILTER_OPTIONS.statuses.map((status: string, idx: number) => (
-              <option key={idx} value={idx === 0 ? "All" : status}>
-                {status}
-              </option>
-            ))}
-          </select>
-        </div>
+        <FilterDropDown
+          label="Academic Status"
+          options={formatOptions(FILTER_OPTIONS.statuses)}
+          value={filterStatus}
+          onChange={setFilterStatus}
+        />
       </div>
     </div>
   );

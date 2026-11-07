@@ -1,96 +1,57 @@
-import { Plus } from "lucide-react";
+import { useStudentHooks } from "../../../customHooks";
+import DateMonthYear from "../../../components/moment/DateMonthYear";
+import { Icons } from "../../../components";
+import { useAppDispatch, useAppSelector } from "../../../redux/ReduxHooks";
+import { movePipelineStage } from "../../../redux/reducers/StudentReducer/StudentReducer";
 import { useState } from "react";
+import type {
+  PipeLineLeadsTypes,
+  ProgressKeysTypes,
+  StageMeta,
+} from "../../../utilities/types";
 
-interface AdmissionLead {
-  id: string;
-  name: string;
-  grade: string;
-  parent: string;
-  phone: string;
-  stage: string;
-  date: string;
-}
-type ToastType = "success" | "error" | "warning" | "info";
+import StudentAdmissionHOC from "../StudentAdmissionHOC";
 
-interface Toast {
-  id: string;
-  message: string;
-  type: ToastType;
+interface SelectedAdvanced {
+  lead: PipeLineLeadsTypes;
+  stage: StageMeta;
+  nextStage: string; // or `Stage` enum type if you have one
 }
-const INITIAL_ADMISSIONS_PIPELINE = [
-  {
-    id: "ADM-LEAD-01",
-    name: "Lucas Scott",
-    grade: "Grade 9",
-    parent: "Karen Scott",
-    phone: "+1 555-0192",
-    stage: "applied",
-    date: "2026-10-20",
-  },
-  {
-    id: "ADM-LEAD-02",
-    name: "Maya Lin",
-    grade: "Grade 10",
-    parent: "Kevin Lin",
-    phone: "+1 555-0193",
-    stage: "doc_verification",
-    date: "2026-10-21",
-  },
-  {
-    id: "ADM-LEAD-03",
-    name: "Ethan Harper",
-    grade: "Grade 11",
-    parent: "Sarah Harper",
-    phone: "+1 555-0194",
-    stage: "entrance_test",
-    date: "2026-10-18",
-  },
-  {
-    id: "ADM-LEAD-04",
-    name: "Isabella Rossi",
-    grade: "Grade 9",
-    parent: "Marco Rossi",
-    phone: "+1 555-0195",
-    stage: "fee_paid",
-    date: "2026-10-22",
-  },
-  {
-    id: "ADM-LEAD-05",
-    name: "Gabriel Santos",
-    grade: "Grade 12",
-    parent: "Maria Santos",
-    phone: "+1 555-0196",
-    stage: "enrolled",
-    date: "2026-10-15",
-  },
-];
+
 const StudentPipeline = () => {
-  // Admission Pipeline State
-  const [pipelineLeads, setPipelineLeads] = useState<AdmissionLead[]>(
-    INITIAL_ADMISSIONS_PIPELINE,
+  const dispatch = useAppDispatch();
+
+  const { triggerModal, activeModal, setTriggerModal, setActiveModal } =
+    useStudentHooks();
+  const [selectedAdvanced, setSelectedAdvanced] =
+    useState<SelectedAdvanced | null>(null);
+
+  const openModal = (type: string) => {
+    setTriggerModal(type);
+    setActiveModal(true);
+  };
+
+  const closeModal = () => {
+    setTriggerModal("");
+    setActiveModal(false);
+  };
+
+  const { progressPipeLine, pipelineLeads, studentsDirectory } = useAppSelector(
+    (state) => state.student,
   );
-  const [isAdmissionModalOpen, setIsAdmissionModalOpen] = useState(false);
-  // Toast Notifications
-  const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const addToast = (message: string, type: ToastType = "success") => {
-    const id = crypto.randomUUID();
-    setToasts((prev) => [...prev, { id, message, type }]);
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 4000);
+  const handleAdvanced = () => {
+    if (selectedAdvanced?.lead.id && selectedAdvanced?.nextStage) {
+      dispatch(
+        movePipelineStage({
+          leadId: selectedAdvanced?.lead.id,
+          nextStage: selectedAdvanced?.nextStage,
+        }),
+      );
+    }
+    closeModal();
   };
 
-  // Handle Drag / Pipeline Stage Change
-  const movePipelineStage = (leadId: string, nextStage: string): void => {
-    setPipelineLeads((prev) =>
-      prev.map((l) => (l.id === leadId ? { ...l, stage: nextStage } : l)),
-    );
-    addToast(
-      `Applicant stage updated to ${nextStage.replace("_", " ").toUpperCase()}`,
-      "info",
-    );
-  };
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
@@ -102,43 +63,10 @@ const StudentPipeline = () => {
             Track standard prospective lead stages for new enrollment applicants
           </p>
         </div>
-        <button
-          onClick={() => setIsAdmissionModalOpen(true)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-[#3B82F6] hover:bg-blue-600 text-white rounded-xl font-medium text-sm shadow-md transition-all"
-        >
-          <Plus className="w-4 h-4" /> Add Prospective Lead
-        </button>
       </div>
 
-      {/* KANBAN BOARD STAGES */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 overflow-x-auto pb-4">
-        {[
-          {
-            key: "applied",
-            label: "1. Applied",
-            color: "border-t-slate-400",
-          },
-          {
-            key: "doc_verification",
-            label: "2. Doc Verification",
-            color: "border-t-blue-500",
-          },
-          {
-            key: "entrance_test",
-            label: "3. Entrance Test",
-            color: "border-t-amber-500",
-          },
-          {
-            key: "fee_paid",
-            label: "4. Fee Paid",
-            color: "border-t-purple-500",
-          },
-          {
-            key: "enrolled",
-            label: "5. Fully Enrolled",
-            color: "border-t-emerald-500",
-          },
-        ].map((stage) => {
+        {progressPipeLine.map((stage) => {
           const stageLeads = pipelineLeads.filter((l) => l.stage === stage.key);
           return (
             <div
@@ -177,11 +105,58 @@ const StudentPipeline = () => {
                       </p>
 
                       <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-                        <span className="text-[10px] text-slate-400">
-                          {lead.date}
-                        </span>
+                        <div className="flex gap-1 items-center">
+                          <Icons
+                            size={stage.icon === "CircleCheck" ? 18 : 15}
+                            className={
+                              stage.icon === "CircleCheck"
+                                ? "fill-green-500 text-white"
+                                : "text-[10px] text-slate-400"
+                            }
+                            name={stage.icon}
+                          />
+                          {stage.key === "fee_paid" ? (
+                            <span className="text-[10px] text-slate-400">
+                              Paid ₹7000
+                            </span>
+                          ) : (
+                            stage.key !== "enrolled" && (
+                              <DateMonthYear
+                                className="text-[10px] text-slate-400"
+                                passingData={lead.date}
+                              />
+                            )
+                          )}
+                        </div>
+
                         <div className="flex items-center gap-1">
-                          {stage.key !== "enrolled" && (
+                          {stage.key === "enrolled" ? (
+                            <>
+                              <button
+                                onClick={() => {
+                                  const stages = [
+                                    "applied",
+                                    "doc_verification",
+                                    "entrance_test",
+                                    "fee_paid",
+                                    "enrolled",
+                                  ];
+                                  const nextIdx = stages.indexOf(stage.key) + 1;
+                                  if (nextIdx < stages.length) {
+                                    dispatch(
+                                      movePipelineStage({
+                                        leadId: lead.id,
+                                        nextStage: stages[nextIdx],
+                                      }),
+                                    );
+                                  }
+                                }}
+                                className="p-1 bg-green-100 pl-2 text-green-600 rounded hover:bg-green-100 text-[10px] font-bold"
+                              >
+                                Enrolled <span>&#10003;</span>
+                              </button>
+                            </>
+                          ) : (
                             <button
                               onClick={() => {
                                 const stages = [
@@ -193,10 +168,28 @@ const StudentPipeline = () => {
                                 ];
                                 const nextIdx = stages.indexOf(stage.key) + 1;
                                 if (nextIdx < stages.length) {
-                                  movePipelineStage(lead.id, stages[nextIdx]);
+                                  setSelectedAdvanced({
+                                    lead,
+                                    stage,
+                                    nextStage: stages[nextIdx],
+                                  });
+                                  if (
+                                    stage.key === "doc_verification" ||
+                                    stage.key === "entrance_test" ||
+                                    stage.key === "fee_paid"
+                                  ) {
+                                    openModal(stage.key);
+                                  } else {
+                                    dispatch(
+                                      movePipelineStage({
+                                        leadId: lead.id,
+                                        nextStage: stages[nextIdx],
+                                      }),
+                                    );
+                                  }
                                 }
                               }}
-                              className="p-1 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 text-[10px] font-bold"
+                              className="p-1 cursor-pointer bg-blue-50 text-blue-600 rounded hover:bg-blue-100 text-[10px] font-bold"
                             >
                               Advance &rarr;
                             </button>
@@ -217,6 +210,16 @@ const StudentPipeline = () => {
           );
         })}
       </div>
+
+      {triggerModal && activeModal && selectedAdvanced && (
+        <StudentAdmissionHOC
+          studentCount={studentsDirectory.length}
+          student={selectedAdvanced.lead}
+          studentAdmissionStatus={triggerModal as ProgressKeysTypes}
+          onClose={closeModal}
+          onNext={handleAdvanced}
+        />
+      )}
     </div>
   );
 };

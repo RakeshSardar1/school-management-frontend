@@ -33,10 +33,10 @@ const StudentProgressbar = () => {
             <button
               key={tab.id}
               onClick={() => chooseProgress(tab)}
-              className={`flex items-center gap-2.5 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+              className={`flex  items-center gap-2.5 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
                 isActive
-                  ? "bg-[#142B4A] text-white shadow-md"
-                  : "text-slate-600 hover:text-[#142B4A] hover:bg-slate-200/80"
+                  ? "bg-[#142B4A] text-white shadow-md "
+                  : "text-slate-600 hover:text-[#142B4A] hover:bg-slate-200/80 cursor-pointer"
               }`}
             >
               <Icons
@@ -48,13 +48,13 @@ const StudentProgressbar = () => {
           );
         })}
       </div>
-      {studentsProgress === "directory" && (
+      {
         <CommonActionButton
           btnName="New Admission"
           onClick={handleNewStudent}
           icon="UserPlus"
         />
-      )}
+      }
     </div>
   );
 };

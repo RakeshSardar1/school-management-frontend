@@ -7,9 +7,10 @@ import type {
   StudentTypes,
 } from "../../../utilities/types";
 import { useStudentHooks } from "../../../customHooks";
+import { STUDENT_ADMISSION } from "../../../redux/ConstantCommon";
+import { StudentAdmissionModal } from "../../../layouts/Modal";
 
 const StudentDirectory = () => {
-  // ── Selectors ──
   const { studentViewMode } = useAppSelector(
     (state) => state.filter.studentsFilter as StudentsFilterStateTypes,
   );
@@ -20,6 +21,10 @@ const StudentDirectory = () => {
     filterSection,
     filterCategory,
     filterStatus,
+    triggerModal,
+    activeModal,
+    setActiveModal,
+    setTriggerModal,
   } = useStudentHooks();
 
   const { studentsDirectory } = useAppSelector((state) => state.student);
@@ -69,6 +74,11 @@ const StudentDirectory = () => {
     [studentsDirectory.length, filteredStudents.length],
   );
 
+  const handleClose = () => {
+    setActiveModal(false);
+    setTriggerModal("");
+  };
+
   return (
     <div className="space-y-6">
       {/* FILTERS & SEARCH TOOLBAR */}
@@ -102,6 +112,13 @@ const StudentDirectory = () => {
       {/* TABLE VIEW */}
       {studentViewMode === "table" && filteredStudents.length > 0 && (
         <StudentsTable filteredStudents={filteredStudents} />
+      )}
+
+      {activeModal && triggerModal === STUDENT_ADMISSION && (
+        <StudentAdmissionModal
+          students={studentsDirectory}
+          close={handleClose}
+        />
       )}
     </div>
   );

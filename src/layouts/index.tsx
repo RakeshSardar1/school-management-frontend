@@ -4,3 +4,4 @@ export { FeesModel } from "./Modal";
 
 export { OverviewLedger } from "./Drawer";
 export { StudentToast } from "./Toast";
+export { RouteOutlet } from "./Outlet";

@@ -3,6 +3,7 @@ import type { StudentTypes } from "../../utilities/types";
 import { Eye, Send } from "lucide-react";
 import { useAppDispatch } from "../../redux/ReduxHooks";
 import { viewStudentProfile } from "../../redux/reducers/StudentReducer/StudentReducer";
+import { Avatar } from "../avatar";
 
 interface StudentTypesProps {
   student: StudentTypes;
@@ -13,11 +14,12 @@ const StudentTableRow: React.FC<StudentTypesProps> = ({ student }) => {
     <>
       <td className="py-4 px-6">
         <div className="flex items-center gap-3">
-          <img
+          <Avatar
             src={student.avatar}
             alt=""
             className="w-10 h-10 rounded-full object-cover ring-2 ring-[#D6B36A]"
           />
+
           <div>
             <p className="font-bold text-[#142B4A] whitespace-nowrap">
               {student.name}

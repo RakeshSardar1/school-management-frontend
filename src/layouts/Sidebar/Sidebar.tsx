@@ -51,6 +51,7 @@ const Sidebar: React.FC<SidebarTypesProps> = ({ active = true }) => {
             <button
               onClick={() => {
                 dispatch(currentSidebar(item.id));
+                dispatch(currentSubSidebar(item.id));
                 if (hasSub) {
                   toggleSubMenu(item.id);
                   if (!activeSubItem && item.subItems) {
@@ -118,6 +119,9 @@ const Sidebar: React.FC<SidebarTypesProps> = ({ active = true }) => {
                       onClick={() => {
                         dispatch(currentSubSidebar(sub.id));
                         setActiveSubItem(sub.id);
+                        if (sub?.path) {
+                          navigate(item.path + "/" + sub.path);
+                        }
                       }}
                       className={`w-full text-left px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all duration-150 flex items-center justify-between ${
                         isSubActive

@@ -6,16 +6,12 @@ import StudentProgressbar from "./progress/StudentProgressbar";
 import { StudentToast } from "../../layouts";
 import { useAppSelector } from "../../redux/ReduxHooks";
 import StudentProgressHOC from "./StudentProgressHOC";
-import { StudentAdmissionModal } from "../../layouts/Modal";
-import { STUDENT_ADMISSION } from "../../redux/ConstantCommon";
 import { StudentsProvider } from "../../context";
-import { useStudentHooks } from "../../customHooks";
 
 const StudentsList = () => {
-  const { studentsProgress, viewStudentProfile, studentsDirectory } =
-    useAppSelector((state) => state.student);
-
-  const { triggerModal, activeModal } = useStudentHooks();
+  const { studentsProgress, viewStudentProfile } = useAppSelector(
+    (state) => state.student,
+  );
 
   return (
     <>
@@ -31,10 +27,6 @@ const StudentsList = () => {
       </div>
 
       {viewStudentProfile && <StudentDrawer student={viewStudentProfile} />}
-
-      {activeModal && triggerModal === STUDENT_ADMISSION && (
-        <StudentAdmissionModal students={studentsDirectory} />
-      )}
     </>
   );
 };

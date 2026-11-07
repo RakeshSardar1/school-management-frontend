@@ -1,3 +1,4 @@
+import { IdCardLanyard } from "lucide-react";
 import {
   Building2,
   Wallet,
@@ -15,6 +16,17 @@ import {
   ChevronDown,
   ChevronRight,
   X,
+  Calendar,
+  CircleCheck,
+  User,
+  School,
+  ShieldCheck,
+  CheckCircle2,
+  Upload,
+  ArrowUpRight,
+  Edit3,
+  FileCheck,
+  IdCard,
   type LucideIcon,
 } from "lucide-react";
 
@@ -36,6 +48,17 @@ const ICON_MAP: Record<string, LucideIcon> = {
   ChevronDown,
   ChevronRight,
   X,
+  Calendar,
+  CircleCheck,
+  User,
+  School,
+  ShieldCheck,
+  CheckCircle2,
+  Upload,
+  ArrowUpRight,
+  Edit3,
+  FileCheck,
+  IdCard,
 };
 
 interface IconProps {

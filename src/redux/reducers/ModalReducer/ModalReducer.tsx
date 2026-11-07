@@ -20,12 +20,8 @@ const ModalReducer = createSlice({
       state.triggerModal = action.payload;
       state.activeModal = true;
     },
-    closeModal: (state) => {
-      state.triggerModal = null;
-      state.activeModal = false;
-    },
   },
 });
 
-export const { chooseModal, closeModal } = ModalReducer.actions;
+export const { chooseModal } = ModalReducer.actions;
 export default ModalReducer.reducer;
