@@ -1,16 +1,21 @@
 import axios from "axios";
-const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+import { StorageConstants } from "../redux/Constant";
 
-const Api = () => {
-  const instance = axios.create({
-    baseURL: "https://vmxqppikwqssxqtquedo.supabase.co/rest/v1/",
-    headers: {
-      apikey: supabaseKey,
-      "Content-Type": "application/json",
-    },
-  });
+export const Api = axios.create({
+  baseURL: "http://localhost:3000/api",
+});
 
-  return instance;
-};
+Api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem(StorageConstants.AUTH_TOKEN);
 
-export { Api };
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);

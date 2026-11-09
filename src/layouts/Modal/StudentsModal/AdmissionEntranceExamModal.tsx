@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import { useId, useState } from "react";
+import type { FormEvent, MouseEvent } from "react";
 import type { PipeLineLeadsTypes } from "../../../utilities/types";
+import { Icons } from "../../../components";
 
 interface StudentTypesProps {
   studentCount: number;
@@ -8,296 +10,263 @@ interface StudentTypesProps {
   close: () => void;
 }
 
-const AdmissionEntranceExamModal: React.FC<StudentTypesProps> = ({
+const AdmissionEntranceExamModal = ({
   student,
-  close,
   onAdvanced,
-}) => {
-  // Form State
-  const [score, setScore] = useState<number | "">("");
+  close,
+}: StudentTypesProps) => {
+  const id = useId();
+  const [hasExam, setHasExam] = useState<boolean | null>(null);
+  const [score, setScore] = useState("");
+  const [totalMarks, setTotalMarks] = useState("");
   const [comment, setComment] = useState("");
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState("");
 
-  // Constants
-  const MAX_SCORE = 100;
-  const PASSING_PERCENTAGE = 30;
+  const passingPercentage = 30;
+  const numericScore = Number(score);
+  const numericTotal = Number(totalMarks);
 
-  // Calculations
-  const numericScore = Number(score) || 0;
-  const percentage = score === "" ? "0.0" : numericScore.toFixed(1);
-  const isBelowThreshold = numericScore < PASSING_PERCENTAGE;
+  const validMarks =
+    score.trim() !== "" &&
+    totalMarks.trim() !== "" &&
+    Number.isFinite(numericScore) &&
+    Number.isFinite(numericTotal) &&
+    numericTotal > 0 &&
+    numericScore >= 0 &&
+    numericScore <= numericTotal;
 
-  // Automatically determine the result based on the score
-  const calculatedResult =
-    score === "" ? null : isBelowThreshold ? "FAIL" : "PASS";
+  const percentage = validMarks ? (numericScore / numericTotal) * 100 : null;
+  const result =
+    percentage === null
+      ? null
+      : percentage >= passingPercentage
+        ? "PASS"
+        : "FAIL";
 
-  const closeModal = (e?: React.MouseEvent) => {
-    if (e) e.preventDefault();
+  const canSubmit = hasExam === false || (hasExam === true && validMarks);
+
+  const closeModal = (event?: MouseEvent) => {
+    event?.preventDefault();
     close();
   };
 
-  // Strict input handler to prevent values > MAX_SCORE
-  const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-    // Allow empty string for clearing the input
-    if (val === "") {
-      setScore("");
+    if (!canSubmit) {
+      setError("Select an option and enter valid marks before proceeding.");
       return;
     }
 
-    const numVal = Number(val);
-
-    // Prevent values outside the 0 - 100 range
-    if (numVal >= 0 && numVal <= MAX_SCORE) {
-      setScore(numVal);
-    }
+    setError("");
+    onAdvanced();
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (score === "" || numericScore < 0 || numericScore > MAX_SCORE) {
-      alert(`Please enter a valid score between 0 and ${MAX_SCORE}.`);
-      return;
-    }
-
-    setIsSubmitted(true);
-
-    // Simulate submission
-    setTimeout(() => {
-      setIsSubmitted(false);
-
-      const examResult = {
-        studentId: student.id,
-        studentName: student.name,
-        score: numericScore,
-        maxScore: MAX_SCORE,
-        percentage: Number(percentage),
-        result: calculatedResult,
-        comment: comment,
-        evaluatedAt: new Date().toISOString(),
-      };
-
-      console.log("Entrance Exam Result:", examResult);
-      onAdvanced();
-    }, 1500);
-  };
+  const inputClass =
+    "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20";
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-8 bg-slate-900/60 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm sm:p-6"
       onClick={closeModal}
     >
       <div
-        className="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden text-slate-800"
-        onClick={(e) => e.stopPropagation()}
+        className="flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white text-slate-800 shadow-xl"
+        onClick={(event) => event.stopPropagation()}
       >
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 flex items-start justify-between bg-slate-50/50">
+        <div className="flex items-start justify-between border-b border-slate-100 bg-slate-50/50 px-6 py-4">
           <div>
-            <h2 className="text-xl font-bold text-slate-900 tracking-tight">
+            <h2 className="text-xl font-bold text-slate-900">
               Entrance Exam Evaluation
             </h2>
-            <p className="text-xs text-slate-500 mt-1">
-              Evaluate candidate:{" "}
+            <p className="mt-1 text-xs text-slate-500">
+              Candidate:{" "}
               <strong className="text-slate-700">{student.name}</strong>
             </p>
           </div>
+
           <button
             type="button"
             onClick={closeModal}
-            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-full transition-colors cursor-pointer"
             aria-label="Close form"
+            className="rounded-full p-2 text-slate-400 hover:bg-slate-200 hover:text-slate-600"
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M18 6 6 18" />
-              <path d="m6 6 12 12" />
-            </svg>
+            <Icons name="X" className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Form Body */}
         <form
-          id="exam-form"
+          id={`${id}-exam-form`}
           onSubmit={handleSubmit}
-          className="overflow-y-auto p-6 space-y-6 flex-1"
+          className="flex-1 space-y-6 overflow-y-auto p-6"
         >
-          {/* Submission Alert */}
-          {isSubmitted && calculatedResult && (
-            <div
-              className={`p-4 border rounded-xl flex items-center gap-3 ${
-                calculatedResult === "PASS"
-                  ? "bg-emerald-50 border-emerald-200 text-emerald-800"
-                  : "bg-rose-50 border-rose-200 text-rose-800"
-              }`}
+          {error && (
+            <p
+              role="alert"
+              className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700"
             >
-              <span className="text-sm font-medium">
-                Evaluation recorded successfully! Candidate {calculatedResult}.
-                Closing...
-              </span>
-            </div>
+              {error}
+            </p>
           )}
 
-          <div className="space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2">
-              Test Scoring
-            </h3>
+          <fieldset className="space-y-3">
+            <legend className="text-sm font-semibold text-slate-700">
+              Is an entrance exam required?
+            </legend>
 
-            <div className="flex items-end gap-4">
-              {/* Score Input (Full Width) */}
-              <div className="space-y-1.5 flex-1">
-                <label className="text-xs font-semibold text-slate-700 flex items-center gap-1">
-                  Score Obtained <span className="text-rose-500">*</span>
-                </label>
+            <div className="flex gap-6 text-sm text-slate-700">
+              <label className="flex cursor-pointer items-center gap-2">
                 <input
-                  type="number"
-                  value={score}
-                  onChange={handleScoreChange}
-                  min="0"
-                  max={MAX_SCORE}
-                  required
-                  placeholder="e.g. 85"
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                  type="radio"
+                  name={`${id}-has-exam`}
+                  checked={hasExam === true}
+                  onChange={() => {
+                    setHasExam(true);
+                    setError("");
+                  }}
                 />
-              </div>
-
-              {/* Total Marks Display (No Input Box) */}
-              <div className="space-y-1.5 shrink-0 pb-2.5">
-                <span className="text-sm font-semibold text-slate-500">
-                  / <span className="text-slate-700">{MAX_SCORE}</span>
-                </span>
-              </div>
-            </div>
-
-            {/* Percentage Display */}
-            <div className="flex items-center justify-between p-3 bg-slate-100 border border-slate-200 rounded-lg">
-              <div className="flex flex-col">
-                <span className="text-[10px] uppercase font-bold text-slate-500">
-                  Calculated Percentage
-                </span>
-                <span
-                  className={`text-xl font-bold ${
-                    isBelowThreshold ? "text-rose-600" : "text-emerald-600"
-                  }`}
-                >
-                  {percentage}%
-                </span>
-              </div>
-              <div className="flex flex-col text-right">
-                <span className="text-[10px] uppercase font-bold text-slate-500">
-                  Passing Requirement
-                </span>
-                <span className="text-sm font-bold text-slate-700">
-                  {PASSING_PERCENTAGE}%
-                </span>
-              </div>
-            </div>
-
-            {/* Auto-Calculated Pass / Fail Display */}
-            <div className="space-y-2 pt-2">
-              <label className="text-xs font-semibold text-slate-700">
-                Evaluation Result
+                Yes
               </label>
-              <div className="grid grid-cols-2 gap-3">
-                {/* Pass Option */}
-                <div
-                  className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${
-                    calculatedResult === "PASS"
-                      ? "border-emerald-500 bg-emerald-50 text-emerald-700"
-                      : "border-slate-200 bg-slate-50 text-slate-400 opacity-60 cursor-not-allowed"
-                  }`}
-                >
-                  <span
-                    className={`text-sm font-bold ${calculatedResult === "PASS" ? "text-emerald-700" : "text-slate-400"}`}
-                  >
-                    Pass
-                  </span>
+
+              <label className="flex cursor-pointer items-center gap-2">
+                <input
+                  type="radio"
+                  name={`${id}-has-exam`}
+                  checked={hasExam === false}
+                  onChange={() => {
+                    setHasExam(false);
+                    setError("");
+                  }}
+                />
+                No
+              </label>
+            </div>
+          </fieldset>
+
+          {hasExam === true && (
+            <>
+              <section className="space-y-4">
+                <h3 className="border-b border-slate-100 pb-2 text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Test Scoring
+                </h3>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label
+                      htmlFor={`${id}-score`}
+                      className="block text-xs font-semibold text-slate-700"
+                    >
+                      Score Obtained *
+                    </label>
+                    <input
+                      id={`${id}-score`}
+                      type="number"
+                      min="0"
+                      step="any"
+                      required
+                      value={score}
+                      onChange={(event) => setScore(event.target.value)}
+                      placeholder="e.g. 85"
+                      className={inputClass}
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label
+                      htmlFor={`${id}-total`}
+                      className="block text-xs font-semibold text-slate-700"
+                    >
+                      Total Marks *
+                    </label>
+                    <input
+                      id={`${id}-total`}
+                      type="number"
+                      min="0"
+                      step="any"
+                      required
+                      value={totalMarks}
+                      onChange={(event) => setTotalMarks(event.target.value)}
+                      placeholder="e.g. 100"
+                      className={inputClass}
+                    />
+                  </div>
                 </div>
 
-                {/* Fail Option */}
-                <div
-                  className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${
-                    calculatedResult === "FAIL"
-                      ? "border-rose-500 bg-rose-50 text-rose-700"
-                      : "border-slate-200 bg-slate-50 text-slate-400 opacity-60 cursor-not-allowed"
-                  }`}
-                >
-                  <span
-                    className={`text-sm font-bold ${calculatedResult === "FAIL" ? "text-rose-700" : "text-slate-400"}`}
+                {score !== "" && totalMarks !== "" && !validMarks && (
+                  <p className="text-xs text-red-600">
+                    Total marks must be greater than zero, and the score must be
+                    between zero and the total.
+                  </p>
+                )}
+
+                {percentage !== null && (
+                  <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-100 p-3">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase text-slate-500">
+                        Calculated Percentage
+                      </p>
+                      <p className="text-xl font-bold text-slate-700">
+                        {percentage.toFixed(1)}%
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] font-bold uppercase text-slate-500">
+                        Passing Requirement
+                      </p>
+                      <p className="text-sm font-bold text-slate-700">
+                        {passingPercentage}%
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {result && (
+                  <div
+                    className={`rounded-xl border p-3 text-sm font-bold ${
+                      result === "PASS"
+                        ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                        : "border-rose-200 bg-rose-50 text-rose-700"
+                    }`}
                   >
-                    Fail
-                  </span>
-                </div>
-              </div>
+                    Result: {result}
+                  </div>
+                )}
+              </section>
 
-              {/* Dynamic Hint Text */}
-              {calculatedResult === "FAIL" && (
-                <p className="text-[11px] text-rose-500 font-medium pt-1">
-                  * Candidate is marked FAIL because their score ({percentage}%)
-                  is below the {PASSING_PERCENTAGE}% threshold.
-                </p>
-              )}
-              {calculatedResult === "PASS" && (
-                <p className="text-[11px] text-emerald-600 font-medium pt-1">
-                  * Candidate is marked PASS because their score ({percentage}%)
-                  meets the {PASSING_PERCENTAGE}% threshold.
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Comments Section */}
-          <div className="space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2">
-              Evaluator Comments
-            </h3>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700">
-                Remarks{" "}
-                <span className="text-slate-400 font-normal">(Optional)</span>
-              </label>
-              <textarea
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                rows={3}
-                placeholder="Add any notes regarding the candidate's performance..."
-                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
-              />
-            </div>
-          </div>
+              <section className="space-y-2">
+                <label
+                  htmlFor={`${id}-comment`}
+                  className="block text-xs font-semibold text-slate-700"
+                >
+                  Evaluator Comments (optional)
+                </label>
+                <textarea
+                  id={`${id}-comment`}
+                  value={comment}
+                  onChange={(event) => setComment(event.target.value)}
+                  rows={3}
+                  placeholder="Add notes about the candidate..."
+                  className={`${inputClass} resize-none`}
+                />
+              </section>
+            </>
+          )}
         </form>
 
-        {/* Modal Footer / Actions */}
-        <div className="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3">
+        <div className="flex items-center justify-end gap-3 border-t border-slate-100 bg-slate-50 p-4">
           <button
             type="button"
             onClick={closeModal}
-            className="px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-200 transition-colors cursor-pointer"
+            className="rounded-lg px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-200"
           >
             Cancel
           </button>
+
           <button
             type="submit"
-            form="exam-form"
-            disabled={score === ""}
-            className={`px-5 py-2 rounded-lg text-sm font-semibold text-white transition-all flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed ${
-              calculatedResult === "PASS"
-                ? "bg-emerald-600 hover:bg-emerald-700"
-                : calculatedResult === "FAIL"
-                  ? "bg-rose-600 hover:bg-rose-700"
-                  : "bg-blue-600 hover:bg-blue-700"
-            }`}
+            form={`${id}-exam-form`}
+            disabled={!canSubmit}
+            className="cursor-pointer rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500"
           >
             Submit Evaluation
           </button>

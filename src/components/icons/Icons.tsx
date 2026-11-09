@@ -27,6 +27,7 @@ import {
   Edit3,
   FileCheck,
   IdCard,
+  Info,
   type LucideIcon,
 } from "lucide-react";
 
@@ -59,6 +60,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Edit3,
   FileCheck,
   IdCard,
+  Info,
 };
 
 interface IconProps {

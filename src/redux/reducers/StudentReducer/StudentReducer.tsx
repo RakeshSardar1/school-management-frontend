@@ -332,17 +332,18 @@ const StudentReducer = createSlice({
     viewStudentProfile: (state, action: PayloadAction<StudentTypes | null>) => {
       state.viewStudentProfile = action.payload;
     },
-    admissionnewStudent: (
+    admissionNewStudent: (
       state,
       action: PayloadAction<StudentAdmissionInProgress>,
     ) => {
-      const userExist = findExistingUser(
+      const newStudent = findExistingUser(
         state.admissionInProgress,
         action.payload,
-        ["fullName", "dateOfBirth"],
+        ["name", "dob"],
       );
-      if (!userExist) {
-        state.admissionInProgress.push(action.payload);
+
+      if (newStudent) {
+        state.admissionInProgress.push(newStudent);
       }
     },
     movePipelineStage: (
@@ -361,7 +362,7 @@ const StudentReducer = createSlice({
 export const {
   changeProgress,
   viewStudentProfile,
-  admissionnewStudent,
+  admissionNewStudent,
   movePipelineStage,
 } = StudentReducer.actions;
 export default StudentReducer.reducer;

@@ -1,19 +1,8 @@
-import React, { useState } from "react";
-import {
-  Users,
-  Wallet,
-  CheckCircle2,
-  Clock,
-  ShieldCheck,
-  Plus,
-  BadgeCheck,
-  PieChart as PieIcon,
-  TrendingUp,
-  AlertTriangle,
-} from "lucide-react";
+import { useState } from "react";
+
 import { useDispatch } from "react-redux";
 import { currentSubSidebar } from "../../redux/reducers/Common/Common";
-import { NavigationLink } from "../../components";
+import { Icons, NavigationLink } from "../../components";
 
 // --- INITIAL STAFF ROSTER ---
 const INITIAL_STAFF_ROSTER = [
@@ -81,11 +70,12 @@ const StaffsDirectory = () => {
               {staffList.length + 45}
             </h3>
             <p className="text-[10px] text-emerald-600 font-bold mt-1 flex items-center gap-1">
-              <TrendingUp className="w-3 h-3" /> +8.5% this session
+              <Icons name="TrendingUp" className="w-3 h-3" />
+              +8.5% this session
             </p>
           </div>
           <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center border border-blue-100">
-            <Users className="w-6 h-6" />
+            <Icons name="Users" className="w-6 h-6" />
           </div>
         </div>
 
@@ -102,7 +92,7 @@ const StaffsDirectory = () => {
             </p>
           </div>
           <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center border border-emerald-100">
-            <ShieldCheck className="w-6 h-6" />
+            <Icons name="ShieldCheck" className="w-6 h-6" />
           </div>
         </div>
 
@@ -115,11 +105,11 @@ const StaffsDirectory = () => {
               3 Candidates
             </h3>
             <p className="text-[10px] text-amber-600 font-bold mt-1 flex items-center gap-1">
-              <Clock className="w-3 h-3" /> Awaiting Attestation
+              <Icons name="Clock" className="w-3 h-3" /> Awaiting Attestation
             </p>
           </div>
           <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center border border-amber-100">
-            <AlertTriangle className="w-6 h-6" />
+            <Icons name="AlertTriangle" className="w-6 h-6" />
           </div>
         </div>
 
@@ -136,7 +126,7 @@ const StaffsDirectory = () => {
             </p>
           </div>
           <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center border border-purple-100">
-            <Wallet className="w-6 h-6" />
+            <Icons name="Wallet" className="w-6 h-6" />
           </div>
         </div>
       </div>
@@ -226,26 +216,33 @@ const StaffsDirectory = () => {
               <h3 className="font-extrabold text-[#0F223D] text-sm">
                 Clearance Checklist
               </h3>
-              <BadgeCheck className="w-5 h-5 text-emerald-600" />
+              <Icons name="BadgeCheck" className="w-5 h-5 text-emerald-600" />
             </div>
             <div className="space-y-2.5 text-xs font-semibold text-slate-700">
               <div className="p-2.5 bg-emerald-50 text-emerald-800 rounded-xl flex items-center justify-between">
                 <span className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Govt ID
-                  Verified
+                  <Icons
+                    name="CheckCircle2"
+                    className="w-4 h-4 text-emerald-600"
+                  />{" "}
+                  Govt ID Verified
                 </span>
                 <span className="font-bold">100%</span>
               </div>
               <div className="p-2.5 bg-emerald-50 text-emerald-800 rounded-xl flex items-center justify-between">
                 <span className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />{" "}
+                  <Icons
+                    name="CheckCircle2"
+                    className="w-4 h-4 text-emerald-600"
+                  />{" "}
                   Qualification Certificates
                 </span>
                 <span className="font-bold">96%</span>
               </div>
               <div className="p-2.5 bg-amber-50 text-amber-800 rounded-xl flex items-center justify-between">
                 <span className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-amber-600" /> Background Checks
+                  <Icons name="Clock" className="w-4 h-4 text-amber-600" />{" "}
+                  Background Checks
                 </span>
                 <span className="font-bold">92%</span>
               </div>
@@ -257,7 +254,7 @@ const StaffsDirectory = () => {
               onClick={handleNewStaffRegistration}
               className="w-full cursor-pointer py-3 bg-[#0F223D] hover:bg-slate-800 text-white font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2 mt-4"
             >
-              <Plus className="w-4 h-4" />
+              <Icons name="Plus" className="w-4 h-4" />
               <span>Start New Employee Registration</span>
             </button>
           </NavigationLink>

@@ -1,4 +1,7 @@
-import type { IndianQualification } from "../utilities/types";
+import type {
+  IndianQualification,
+  StudentRelationTypes,
+} from "../utilities/types";
 
 //UserAccess
 export const SUPER_ADMIN = "super_admin";
@@ -83,6 +86,19 @@ export const SIDEBAR_API = {
 
 //Sutdents Section
 export const GENDER_DATA = ["Male", "Female", "Other", "Not specified"];
+
+export const RELIGIONS_DATA = [
+  "Hinduism",
+  "Islam",
+  "Christianity",
+  "Sikhism",
+  "Buddhism",
+  "Jainism",
+  "Judaism",
+  "Zoroastrianism",
+  "Other",
+  "Not Specified",
+];
 
 export const GRADES_DATA = [
   "Grader 1",
@@ -347,3 +363,81 @@ export const INDIAN_QUALIFICATIONS: IndianQualification[] = [
     isDegree: true,
   },
 ];
+
+export const BLOOD_GROUPS_DATA = [
+  "A+",
+  "A-",
+  "B+",
+  "B-",
+  "AB+",
+  "AB-",
+  "O+",
+  "O-",
+  "Unknown",
+];
+
+export const STUDENT_RELATIONS: StudentRelationTypes[] = [
+  // ---- Immediate family ----
+  { value: "father", label: "Father", category: "Immediate Family" },
+  { value: "mother", label: "Mother", category: "Immediate Family" },
+  { value: "brother", label: "Brother", category: "Immediate Family" },
+  { value: "sister", label: "Sister", category: "Immediate Family" },
+
+  // ---- Extended family ----
+  { value: "grandfather", label: "Grandfather", category: "Extended Family" },
+  { value: "grandmother", label: "Grandmother", category: "Extended Family" },
+  { value: "uncle", label: "Uncle", category: "Extended Family" },
+  { value: "aunt", label: "Aunt", category: "Extended Family" },
+  { value: "cousin", label: "Cousin", category: "Extended Family" },
+
+  // ---- Guardian / other ----
+  { value: "guardian", label: "Guardian", category: "Other" },
+  { value: "other", label: "Other", category: "Other" },
+];
+
+//API Endpoints
+export const ApiEndpoints = {
+  //Health
+  HEALTH_CHECK: "/health",
+
+  // Auth
+  AUTH_LOGIN: "/auth/login",
+  AUTH_LOGOUT: "/auth/logout",
+  AUTH_REGISTER: "/auth/register",
+  AUTH_REFRESH_TOKEN: "/auth/refresh-token",
+  AUTH_FORGOT_PASSWORD: "/auth/forgot-password",
+  AUTH_UPDATE_PASSWORD: "/auth/update-password",
+  AUTH_RESET_PASSWORD: "/auth/reset-password",
+
+  // User
+  USER_ME: "/auth/me",
+  USER_TEAM: "/users/my-team",
+  USER_PROFILE: "/api/user/profile",
+  USER_UPDATE: "/api/user/update",
+  USER_CHANGE_PASSWORD: "/api/user/change-password",
+  USER_LIST: "/api/users",
+  ADD_SUBORDINATE: "/users/subordinates",
+
+  // Network
+  NETWORK_TREE: "/api/network/tree",
+  NETWORK_TEAM: "/api/network/team",
+  NETWORK_DOWNLINE: "/api/network/downline",
+
+  // Commission
+  COMMISSION_LIST: "/api/commissions",
+  COMMISSION_SUMMARY: "/api/commissions/summary",
+  COMMISSION_WITHDRAW: "/api/commissions/withdraw",
+
+  // Dashboard
+  DASHBOARD_STATS: "/api/dashboard/stats",
+  DASHBOARD_CHARTS: "/api/dashboard/charts",
+
+  //Product
+  ALL_PRODUCTS: "/products",
+  MY_CART: `/products/cart`,
+  ADD_MY_CART: `/products/cart/add`,
+
+  //Payment
+  CREATE_ORDER: "/payment/create-order",
+  VERIFY_PAYMENT: "/payment/verify-payment",
+} as const;

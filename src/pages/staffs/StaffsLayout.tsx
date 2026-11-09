@@ -1,4 +1,3 @@
-import { Icons } from "../../components";
 import { RouteOutlet } from "../../layouts";
 import { useAppSelector } from "../../redux/ReduxHooks";
 

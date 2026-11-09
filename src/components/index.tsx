@@ -7,3 +7,5 @@ export { Avatar } from "./avatar";
 export { FilterDropDown } from "./dropdown";
 export { DateMonthYearProps } from "./moment";
 export { NavigationLink } from "./navigation";
+export { OutsideClick } from "./helper";
+export { DocumentUploadField } from "./documentUpload";

@@ -309,29 +309,40 @@ export interface StageMeta {
 // ============================================================
 
 // In-progress (form submission payload)
-export interface StudentAdmissionInProgress {
-  fullName: string;
-  targetGrade: string;
-  assignedSection: string;
-  gender: "Male" | "Female" | "Other";
+export interface StudentAdmissionInProgress extends StudentRegistrationInProgress {
+  religion: string;
+  bloodGroup: string;
+  avatar?: string;
+  parentDetails?: ParentAdmissionDetails;
+}
+
+export interface StudentRelationTypes {
+  value: string;
+  label: string;
   category: string;
+}
+
+export interface ParentAdmissionDetails {
   guardianName: string;
-  emergencyContactPhone: string;
-  dateOfBirth: string | null;
+  guardianPhone: string;
+  motherName: string;
+  motherPhone: string;
+  relation: string;
+  occupation: string;
+  qualification: string;
+  annualIncome: string;
+  address: string;
+  guardianEmail: string;
 }
 
 // Registration-in-progress (newer used shape)
 export interface StudentRegistrationInProgress {
-  id: string;
   name: string;
   grade: string;
   gender: StudentGender;
-  admissionNo: string;
   section: string;
-  guardianPhone: string;
   dob: string;
   category: string;
-  guardianName: string;
 }
 
 // Lead / pipeline record
@@ -371,6 +382,17 @@ export interface StudentTypes {
   verificationStage?: RegistrationStatus;
 }
 
+export interface ParentTypes {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  avatar?: string;
+  address: string;
+  status: UserActiveTypes;
+  studentIds: string[];
+}
+
 //Staffs
 
 export interface StaffDrawerViewModel {
@@ -391,4 +413,32 @@ export interface IndianQualification {
   duration: string;
   entryRequirement: string;
   isDegree: boolean;
+}
+
+export interface DocumentUploadFieldProps {
+  label: string;
+  optional?: boolean;
+  file: File | null;
+  onFileSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onRemove: () => void;
+  fullWidth?: boolean;
+}
+
+//API
+
+//API Response for Health Check
+
+export interface HealthDataResponseTypes {
+  status: string;
+  uptime?: number;
+  environment?: string;
+  database?: {
+    host?: string;
+    port?: string;
+    name?: string;
+  };
+  memory?: {
+    rss?: string;
+    heapUsed?: string;
+  };
 }
