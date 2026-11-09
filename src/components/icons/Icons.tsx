@@ -28,6 +28,7 @@ import {
   FileCheck,
   IdCard,
   Info,
+  CircleX,
   type LucideIcon,
 } from "lucide-react";
 
@@ -61,6 +62,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   FileCheck,
   IdCard,
   Info,
+  CircleX,
 };
 
 interface IconProps {

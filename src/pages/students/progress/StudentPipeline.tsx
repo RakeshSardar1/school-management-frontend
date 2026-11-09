@@ -1,9 +1,8 @@
+import { useState, useMemo } from "react";
 import { useStudentHooks } from "../../../customHooks";
-import DateMonthYear from "../../../components/moment/DateMonthYear";
-import { Icons } from "../../../components";
+import { DateMonthYear, Icons } from "../../../components";
 import { useAppDispatch, useAppSelector } from "../../../redux/ReduxHooks";
 import { movePipelineStage } from "../../../redux/reducers/StudentReducer/StudentReducer";
-import { useState } from "react";
 import type {
   PipeLineLeadsTypes,
   ProgressKeysTypes,
@@ -11,11 +10,12 @@ import type {
 } from "../../../utilities/types";
 
 import StudentAdmissionHOC from "../StudentAdmissionHOC";
+import { ProgressKeys } from "../../../redux/ConstantCommon";
 
 interface SelectedAdvanced {
   lead: PipeLineLeadsTypes;
   stage: StageMeta;
-  nextStage: string; // or `Stage` enum type if you have one
+  nextStage: ProgressKeysTypes;
 }
 
 const StudentPipeline = () => {
@@ -23,8 +23,25 @@ const StudentPipeline = () => {
 
   const { triggerModal, activeModal, setTriggerModal, setActiveModal } =
     useStudentHooks();
+
   const [selectedAdvanced, setSelectedAdvanced] =
     useState<SelectedAdvanced | null>(null);
+
+  const { progressPipeLine, pipelineLeads, studentsDirectory } = useAppSelector(
+    (state) => state.student,
+  );
+
+  // OPTIMIZATION 1: Group leads by stage once instead of filtering inside the map loop
+  const leadsByStage = useMemo(() => {
+    return pipelineLeads.reduce(
+      (acc, lead) => {
+        if (!acc[lead.stage]) acc[lead.stage] = [];
+        acc[lead.stage].push(lead);
+        return acc;
+      },
+      {} as Record<string, PipeLineLeadsTypes[]>,
+    );
+  }, [pipelineLeads]);
 
   const openModal = (type: string) => {
     setTriggerModal(type);
@@ -36,20 +53,37 @@ const StudentPipeline = () => {
     setActiveModal(false);
   };
 
-  const { progressPipeLine, pipelineLeads, studentsDirectory } = useAppSelector(
-    (state) => state.student,
-  );
-
   const handleAdvanced = () => {
-    if (selectedAdvanced?.lead.id && selectedAdvanced?.nextStage) {
+    if (selectedAdvanced?.lead.name && selectedAdvanced?.nextStage) {
       dispatch(
         movePipelineStage({
-          leadId: selectedAdvanced?.lead.id,
-          nextStage: selectedAdvanced?.nextStage,
+          leadId: selectedAdvanced.lead.name,
+          nextStage: selectedAdvanced.nextStage,
         }),
       );
     }
     closeModal();
+  };
+
+  // OPTIMIZATION 2: Extracted the advance logic out of the JSX
+  const handleAdvanceStage = (lead: PipeLineLeadsTypes, stage: StageMeta) => {
+    const nextIdx = ProgressKeys.findIndex((key) => key === stage.key) + 1;
+
+    if (nextIdx >= ProgressKeys.length) return;
+
+    const nextStage = ProgressKeys[nextIdx];
+
+    const requiresModal =
+      stage.key === "doc_verification" ||
+      stage.key === "entrance_test" ||
+      (stage.key === "fee_paid" && !lead.paymentStatus);
+
+    if (requiresModal) {
+      setSelectedAdvanced({ lead, stage, nextStage });
+      openModal(stage.key);
+    } else {
+      dispatch(movePipelineStage({ leadId: lead.name, nextStage }));
+    }
   };
 
   return (
@@ -67,7 +101,9 @@ const StudentPipeline = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 overflow-x-auto pb-4">
         {progressPipeLine.map((stage) => {
-          const stageLeads = pipelineLeads.filter((l) => l.stage === stage.key);
+          // Use the memoized object here instead of filtering inside the loop
+          const stageLeads = leadsByStage[stage.key] || [];
+
           return (
             <div
               key={stage.key}
@@ -84,9 +120,9 @@ const StudentPipeline = () => {
                 </div>
 
                 <div className="space-y-3">
-                  {stageLeads.map((lead) => (
+                  {stageLeads.map((lead, index) => (
                     <div
-                      key={lead.id}
+                      key={index}
                       className="bg-white p-4 rounded-xl shadow-xs border border-slate-200 space-y-2 hover:shadow-md transition-shadow"
                     >
                       <div className="flex items-start justify-between">
@@ -105,93 +141,85 @@ const StudentPipeline = () => {
                       </p>
 
                       <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-                        <div className="flex gap-1 items-center">
-                          <Icons
-                            size={stage.icon === "CircleCheck" ? 18 : 15}
-                            className={
-                              stage.icon === "CircleCheck"
-                                ? "fill-green-500 text-white"
-                                : "text-[10px] text-slate-400"
-                            }
-                            name={stage.icon}
-                          />
-                          {stage.key === "fee_paid" ? (
-                            <span className="text-[10px] text-slate-400">
-                              Paid ₹7000
+                        {stage.key === "fee_paid" ? (
+                          lead.paymentStatus ? (
+                            <span className="flex items-center gap-1">
+                              <Icons
+                                name="CircleCheck"
+                                size={18}
+                                className="fill-green-500 text-white"
+                              />
+                              <span className="text-[10px] font-semibold text-green-600">
+                                Paid
+                              </span>
                             </span>
                           ) : (
-                            stage.key !== "enrolled" && (
-                              <DateMonthYear
-                                className="text-[10px] text-slate-400"
-                                passingData={lead.date}
+                            <span className="flex items-center gap-1">
+                              <Icons
+                                name="CircleX"
+                                size={18}
+                                className="text-red-500"
                               />
-                            )
-                          )}
-                        </div>
+                              <span className="text-[10px] font-semibold text-red-500">
+                                Not paid
+                              </span>
+                            </span>
+                          )
+                        ) : (
+                          <span className="flex items-center gap-1">
+                            <Icons
+                              size={stage.icon === "CircleCheck" ? 18 : 15}
+                              className={
+                                stage.icon === "CircleCheck"
+                                  ? "fill-green-500 text-white"
+                                  : "text-[10px] text-slate-400"
+                              }
+                              name={stage.icon}
+                            />
+
+                            {stage.key == "enrolled" && (
+                              <>
+                                <span className="text-[10px] text-slate-400">
+                                  Paid on:
+                                </span>
+                              </>
+                            )}
+                            <DateMonthYear
+                              className="text-[10px] text-slate-400"
+                              passingData={lead.date}
+                            />
+                          </span>
+                        )}
 
                         <div className="flex items-center gap-1">
                           {stage.key === "enrolled" ? (
-                            <>
-                              <button
-                                onClick={() => {
-                                  const stages = [
-                                    "applied",
-                                    "doc_verification",
-                                    "entrance_test",
-                                    "fee_paid",
-                                    "enrolled",
-                                  ];
-                                  const nextIdx = stages.indexOf(stage.key) + 1;
-                                  if (nextIdx < stages.length) {
-                                    dispatch(
-                                      movePipelineStage({
-                                        leadId: lead.id,
-                                        nextStage: stages[nextIdx],
-                                      }),
-                                    );
-                                  }
-                                }}
-                                className="p-1 bg-green-100 pl-2 text-green-600 rounded hover:bg-green-100 text-[10px] font-bold"
-                              >
-                                Enrolled <span>&#10003;</span>
-                              </button>
-                            </>
-                          ) : (
                             <button
                               onClick={() => {
-                                const stages = [
-                                  "applied",
-                                  "doc_verification",
-                                  "entrance_test",
-                                  "fee_paid",
-                                  "enrolled",
-                                ];
-                                const nextIdx = stages.indexOf(stage.key) + 1;
-                                if (nextIdx < stages.length) {
-                                  setSelectedAdvanced({
-                                    lead,
-                                    stage,
-                                    nextStage: stages[nextIdx],
-                                  });
-                                  if (
-                                    stage.key === "doc_verification" ||
-                                    stage.key === "entrance_test" ||
-                                    stage.key === "fee_paid"
-                                  ) {
-                                    openModal(stage.key);
-                                  } else {
-                                    dispatch(
-                                      movePipelineStage({
-                                        leadId: lead.id,
-                                        nextStage: stages[nextIdx],
-                                      }),
-                                    );
-                                  }
+                                const nextIdx =
+                                  ProgressKeys.findIndex(
+                                    (key) => key === stage.key,
+                                  ) + 1;
+                                if (nextIdx < ProgressKeys.length) {
+                                  dispatch(
+                                    movePipelineStage({
+                                      leadId: lead.name,
+                                      nextStage: ProgressKeys[nextIdx],
+                                    }),
+                                  );
                                 }
                               }}
+                              className="p-1 bg-green-100 pl-2 text-green-600 rounded hover:bg-green-100 text-[10px] font-bold"
+                            >
+                              Enrolled <span>&#10003;</span>
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleAdvanceStage(lead, stage)}
                               className="p-1 cursor-pointer bg-blue-50 text-blue-600 rounded hover:bg-blue-100 text-[10px] font-bold"
                             >
-                              Advance &rarr;
+                              {stage.key === "fee_paid" && !lead.paymentStatus
+                                ? "Pay Now →"
+                                : "Advance →"}
                             </button>
                           )}
                         </div>

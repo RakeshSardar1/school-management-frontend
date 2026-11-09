@@ -16,6 +16,8 @@ const StudentProgressbar = () => {
 
   const handleNewStudent = () => {
     setTriggerModal(STUDENT_ADMISSION);
+    dispatch(changeProgress("directory"));
+    dispatch(currentSubSidebar("Student Directory"));
     setActiveModal(true);
   };
 

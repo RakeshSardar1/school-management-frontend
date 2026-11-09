@@ -343,6 +343,7 @@ export interface StudentRegistrationInProgress {
   section: string;
   dob: string;
   category: string;
+  paymentStatus: boolean;
 }
 
 // Lead / pipeline record

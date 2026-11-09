@@ -229,12 +229,11 @@ const initialState: InitialStates = {
       key: "enrolled",
       label: "5. Fully Enrolled",
       color: "border-t-emerald-500",
-      icon: "FileCheck",
+      icon: "CircleCheck",
     },
   ],
   pipelineLeads: [
     {
-      id: "ADM-LEAD-01",
       name: "Lucas Scott",
       grade: "Grade 9",
       parent: "Karen Scott",
@@ -242,16 +241,13 @@ const initialState: InitialStates = {
       stage: "applied",
       date: "2026-10-20",
 
-      admissionNo: "ADM-1234",
       section: "Section A",
       gender: "Male",
       category: "General",
-      guardianName: "Karen Scott",
-      guardianPhone: "+1 555-0192",
       dob: "2011-04-12",
+      paymentStatus: false,
     },
     {
-      id: "ADM-LEAD-02",
       name: "Maya Lin",
       grade: "Grade 10",
       parent: "Kevin Lin",
@@ -259,16 +255,13 @@ const initialState: InitialStates = {
       stage: "doc_verification",
       date: "2026-10-21",
 
-      admissionNo: "ADM-5678",
       section: "Section B",
       gender: "Female",
       category: "OBC",
-      guardianName: "Kevin Lin",
-      guardianPhone: "+1 555-0193",
       dob: "2010-08-25",
+      paymentStatus: false,
     },
     {
-      id: "ADM-LEAD-03",
       name: "Ethan Harper",
       grade: "Grade 11",
       parent: "Sarah Harper",
@@ -276,16 +269,13 @@ const initialState: InitialStates = {
       stage: "entrance_test",
       date: "2026-10-18",
 
-      admissionNo: "ADM-9012",
       section: "Section A",
       gender: "Male",
       category: "General",
-      guardianName: "Sarah Harper",
-      guardianPhone: "+1 555-0194",
       dob: "2009-11-03",
+      paymentStatus: false,
     },
     {
-      id: "ADM-LEAD-04",
       name: "Isabella Rossi",
       grade: "Grade 9",
       parent: "Marco Rossi",
@@ -293,16 +283,13 @@ const initialState: InitialStates = {
       stage: "fee_paid",
       date: "2026-10-22",
 
-      admissionNo: "ADM-3456",
       section: "Section C",
       gender: "Female",
       category: "SC/ST",
-      guardianName: "Marco Rossi",
-      guardianPhone: "+1 555-0195",
       dob: "2011-02-14",
+      paymentStatus: false,
     },
     {
-      id: "ADM-LEAD-05",
       name: "Gabriel Santos",
       grade: "Grade 12",
       parent: "Maria Santos",
@@ -310,13 +297,11 @@ const initialState: InitialStates = {
       stage: "enrolled",
       date: "2026-10-15",
 
-      admissionNo: "ADM-7890",
       section: "Section B",
       gender: "Male",
       category: "General",
-      guardianName: "Maria Santos",
-      guardianPhone: "+1 555-0196",
       dob: "2008-06-30",
+      paymentStatus: true,
     },
   ],
   admissionInProgress: [],
@@ -353,7 +338,7 @@ const StudentReducer = createSlice({
       const { leadId, nextStage } = action.payload;
 
       state.pipelineLeads = state.pipelineLeads.map((l) =>
-        l.id === leadId ? { ...l, stage: nextStage } : l,
+        l.name === leadId ? { ...l, stage: nextStage } : l,
       );
     },
   },

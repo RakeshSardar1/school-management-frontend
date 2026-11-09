@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import type { PipeLineLeadsTypes } from "../../../utilities/types";
+import { QrGenerate } from "../../../components";
+import { useAppSelector } from "../../../redux/ReduxHooks";
 
 interface FeePaymentModalProps {
   student: PipeLineLeadsTypes;
@@ -12,14 +14,21 @@ const AdmissionFeesModalForm: React.FC<FeePaymentModalProps> = ({
   close,
   onSuccess,
 }) => {
-  const [paymentMethod, setPaymentMethod] = useState<
-    "UPI" | "CARD" | "NETBANKING" | "CASH"
-  >("UPI");
+  const [paymentMethod, setPaymentMethod] = useState<"UPI" | "CASH">("UPI");
   const [isProcessing, setIsProcessing] = useState(false);
-  const [discountInput, setDiscountInput] = useState<string>("2000");
+  const [discountInput, setDiscountInput] = useState<string>("0");
+  const [cashConfirmed, setCashConfirmed] = useState(false);
 
-  const closeModal = (e?: React.MouseEvent) => {
-    if (e) e.preventDefault();
+  const authUser = useAppSelector((state) => state.auth.user);
+
+  const canAcceptCash =
+    authUser === "super_admin" ||
+    authUser === "admin" ||
+    authUser === "management" ||
+    authUser === "principal" ||
+    authUser === "accountant";
+
+  const closeModal = () => {
     if (isProcessing) return;
     close();
   };
@@ -40,6 +49,15 @@ const AdmissionFeesModalForm: React.FC<FeePaymentModalProps> = ({
 
   const handlePay = (e: React.FormEvent) => {
     e.preventDefault();
+    if (
+      isProcessing ||
+      paymentMethod !== "CASH" ||
+      !cashConfirmed ||
+      !canAcceptCash
+    ) {
+      return;
+    }
+
     setIsProcessing(true);
     setTimeout(() => {
       setIsProcessing(false);
@@ -70,7 +88,9 @@ const AdmissionFeesModalForm: React.FC<FeePaymentModalProps> = ({
           <button
             type="button"
             onClick={closeModal}
-            disabled={isProcessing}
+            disabled={
+              isProcessing || paymentMethod !== "CASH" || !cashConfirmed
+            }
             className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-full transition-colors cursor-pointer disabled:opacity-50"
           >
             <svg
@@ -128,7 +148,10 @@ const AdmissionFeesModalForm: React.FC<FeePaymentModalProps> = ({
               <input
                 type="number"
                 value={discountInput}
-                onChange={(e) => setDiscountInput(e.target.value)}
+                onChange={(e) => {
+                  setDiscountInput(e.target.value);
+                  setCashConfirmed(false);
+                }}
                 min="0"
                 max={subtotal}
                 placeholder="0"
@@ -163,129 +186,112 @@ const AdmissionFeesModalForm: React.FC<FeePaymentModalProps> = ({
                 Payment Method
               </h3>
               <div className="grid grid-cols-2 gap-2">
-                {(["UPI", "CARD", "NETBANKING", "CASH"] as const).map(
-                  (method) => (
-                    <label
-                      key={method}
-                      className={`flex items-center justify-center gap-1.5 p-2 rounded-lg border-2 transition-all cursor-pointer text-center ${
-                        paymentMethod === method
-                          ? "border-blue-500 bg-blue-50 text-blue-700"
-                          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value={method}
-                        checked={paymentMethod === method}
-                        onChange={() => setPaymentMethod(method)}
-                        className="sr-only"
-                      />
-                      <span className="text-[10px] font-bold uppercase leading-tight">
-                        {method === "NETBANKING" ? "Net Banking" : method}
-                      </span>
-                    </label>
-                  ),
-                )}
+                {(["UPI", "CASH"] as const).map((method) => (
+                  <label
+                    key={method}
+                    className={`flex items-center justify-center gap-1.5 p-2 rounded-lg border-2 transition-all cursor-pointer text-center ${
+                      paymentMethod === method
+                        ? "border-blue-500 bg-blue-50 text-blue-700"
+                        : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value={method}
+                      checked={paymentMethod === method}
+                      onChange={() => {
+                        setPaymentMethod(method);
+                        setCashConfirmed(false);
+                      }}
+                      className="sr-only"
+                    />
+                    <span className="text-[10px] font-bold uppercase leading-tight">
+                      {method === "UPI" ? "UPI" : method}
+                    </span>
+                  </label>
+                ))}
               </div>
             </div>
 
             {/* Dynamic Input Fields based on Payment Method */}
             <div className="space-y-3">
-              {paymentMethod === "UPI" && (
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-700">
-                    UPI ID <span className="text-rose-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="student@upi"
-                    className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-md text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                  />
-                </div>
-              )}
-
-              {paymentMethod === "CARD" && (
-                <div className="space-y-2">
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-slate-700">
-                      Card Number <span className="text-rose-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="0000 0000 0000 0000"
-                      maxLength={19}
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-md text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-700">
-                        Expiry <span className="text-rose-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="MM/YY"
-                        maxLength={5}
-                        className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-md text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-700">
-                        CVV <span className="text-rose-500">*</span>
-                      </label>
-                      <input
-                        type="password"
-                        required
-                        placeholder="***"
-                        maxLength={4}
-                        className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-md text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {paymentMethod === "NETBANKING" && (
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-700">
-                    Select Bank <span className="text-rose-500">*</span>
-                  </label>
-                  <select
-                    required
-                    className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-md text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all cursor-pointer"
-                  >
-                    <option value="">Choose bank...</option>
-                    <option value="HDFC">HDFC Bank</option>
-                    <option value="SBI">State Bank of India</option>
-                    <option value="ICICI">ICICI Bank</option>
-                    <option value="AXIS">Axis Bank</option>
-                  </select>
-                </div>
-              )}
+              {paymentMethod === "UPI" && <QrGenerate total={total} />}
 
               {paymentMethod === "CASH" && (
-                <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2">
-                  <svg
-                    className="w-4 h-4 text-amber-500 shrink-0 mt-0.5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <p className="text-[10px] text-amber-700 leading-tight">
-                    Collect cash from the student/guardian. Clicking "Proceed to
-                    Pay" marks this as completed.
-                  </p>
+                <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
+                      <svg
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        aria-hidden="true"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M2.25 6.75h19.5v10.5H2.25zM6 9.75h.008v.008H6V9.75Zm12 4.5h.008v.008H18v-.008ZM15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                        />
+                      </svg>
+                    </div>
+
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-800">
+                        Cash collection
+                      </h4>
+                      <p className="mt-1 text-xs leading-relaxed text-slate-500">
+                        Collect the amount from the student's parent or
+                        guardian.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border border-slate-100 bg-slate-50 px-4 py-3">
+                    <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                      Amount to collect
+                    </p>
+                    <p className="mt-1 text-xl font-bold text-slate-900">
+                      ₹{total.toLocaleString("en-IN")}
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <button
+                      type="button"
+                      aria-pressed={cashConfirmed}
+                      disabled={!canAcceptCash || isProcessing}
+                      onClick={() =>
+                        setCashConfirmed((confirmed) => !confirmed)
+                      }
+                      className={`cursor-pointer flex w-full items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-xs font-bold transition ${
+                        cashConfirmed
+                          ? "border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                          : "border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100"
+                      } disabled:cursor-not-allowed disabled:opacity-50`}
+                    >
+                      {cashConfirmed
+                        ? "✓ Cash received"
+                        : "Confirm cash received"}
+                    </button>
+                    {!canAcceptCash && (
+                      <p
+                        role="alert"
+                        className="text-center text-xs text-red-600"
+                      >
+                        Your account is not authorized to accept cash payments.
+                        Please contact an authorized staff member.
+                      </p>
+                    )}
+
+                    <p className="text-center text-[11px] leading-relaxed text-slate-500">
+                      {cashConfirmed
+                        ? "Click again to undo your confirmation."
+                        : "Confirm only after you have received the cash."}
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
@@ -305,7 +311,12 @@ const AdmissionFeesModalForm: React.FC<FeePaymentModalProps> = ({
           <button
             type="submit"
             form="fee-payment-form"
-            disabled={isProcessing}
+            disabled={
+              isProcessing ||
+              paymentMethod !== "CASH" ||
+              !cashConfirmed ||
+              !canAcceptCash
+            }
             className="px-5 py-2 rounded-lg text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white transition-all flex items-center gap-1.5 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer shadow-md shadow-blue-500/20"
           >
             {isProcessing ? (
@@ -313,8 +324,10 @@ const AdmissionFeesModalForm: React.FC<FeePaymentModalProps> = ({
                 <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 Processing...
               </>
+            ) : paymentMethod === "CASH" ? (
+              "Confirm Cash Payment"
             ) : (
-              "Proceed to Pay"
+              "Awaiting UPI Verification"
             )}
           </button>
         </div>

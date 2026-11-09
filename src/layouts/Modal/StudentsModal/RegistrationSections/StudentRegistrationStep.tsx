@@ -119,6 +119,7 @@ const StudentRegistrationStep: React.FC<StudentTypesProps> = ({
           religion,
           bloodGroup: bloodGroup || "",
           dob,
+          paymentStatus: false,
         };
         onNext(newStudentRegistration);
         dispatch(admissionNewStudent(newStudentRegistration));
@@ -260,7 +261,6 @@ const StudentRegistrationStep: React.FC<StudentTypesProps> = ({
               className="truncate"
               fallback={"DD/MM/YYYY"}
             />
-
             <Icons
               name="Calendar"
               className={`w-3.5 h-3.5 text-slate-400 ml-2 transition-transform duration-200 ${

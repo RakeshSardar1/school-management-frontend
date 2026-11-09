@@ -1,1 +1,1 @@
-export { default as DateMonthYearProps } from "./DateMonthYear";
+export { default as DateMonthYear } from "./DateMonthYear";

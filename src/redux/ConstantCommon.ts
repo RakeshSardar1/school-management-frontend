@@ -1,5 +1,6 @@
 import type {
   IndianQualification,
+  ProgressKeysTypes,
   StudentRelationTypes,
 } from "../utilities/types";
 
@@ -130,6 +131,14 @@ export const CATEGORIES_DATA = [
   "SC/ST",
   "International",
   "Sports Quota",
+];
+
+export const ProgressKeys: ProgressKeysTypes[] = [
+  "applied",
+  "doc_verification",
+  "entrance_test",
+  "fee_paid",
+  "enrolled",
 ];
 
 export const USERS_CATEGORY: string[] = [
