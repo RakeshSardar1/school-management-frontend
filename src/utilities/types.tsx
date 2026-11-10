@@ -2,6 +2,8 @@
 // OVERVIEW
 // ============================================================
 
+import type { ReactNode } from "react";
+
 // ============================================================
 // 🔹 BASIC PRIMITIVES & UNIONS
 // ============================================================
@@ -21,18 +23,18 @@ export type StudentFeeStatus = "Paid" | "Partial" | "Pending" | "Overdue";
 export type StaffGradeShort = (typeof GRADES_DATA)[number];
 
 export const GRADES_DATA = [
-  "Grader 1",
-  "Grader 2",
-  "Grader 3",
-  "Grader 4",
-  "Grader 5",
-  "Grader 6",
-  "Grader 7",
-  "Grader 8",
-  "Grader 9",
-  "Grader 10",
-  "Grader 11",
-  "Grader 12",
+  "Grade 1",
+  "Grade 2",
+  "Grade 3",
+  "Grade 4",
+  "Grade 5",
+  "Grade 6",
+  "Grade 7",
+  "Grade 8",
+  "Grade 9",
+  "Grade 10",
+  "Grade 11",
+  "Grade 12",
 ];
 
 // Admission progress
@@ -310,10 +312,15 @@ export interface StageMeta {
 
 // In-progress (form submission payload)
 export interface StudentAdmissionInProgress extends StudentRegistrationInProgress {
+  phone: ReactNode;
+  parent: ReactNode;
   religion: string;
   bloodGroup: string;
   avatar?: string;
   parentDetails?: ParentAdmissionDetails;
+  stage: string;
+  date: string | Date;
+  fees: string | number | undefined;
 }
 
 export interface StudentRelationTypes {
@@ -338,20 +345,23 @@ export interface ParentAdmissionDetails {
 // Registration-in-progress (newer used shape)
 export interface StudentRegistrationInProgress {
   name: string;
-  grade: string;
+  grade: StaffGradeShort;
   gender: StudentGender;
   section: string;
   dob: string;
   category: string;
   paymentStatus: boolean;
+  payment?: AdmissionPayment;
 }
 
 // Lead / pipeline record
 export interface PipeLineLeadsTypes extends StudentRegistrationInProgress {
+  fees: any;
   parent: string;
   phone: string;
   stage: ProgressKeysTypes;
   date: string;
+  payment?: AdmissionPayment;
 }
 
 // Fully enrolled student
@@ -361,7 +371,7 @@ export interface StudentTypes {
   rollNo: string;
   name: string;
   avatar?: string;
-  grade: string;
+  grade: StaffGradeShort;
   section: string;
   gender: StudentGender;
   category: string;
@@ -442,4 +452,60 @@ export interface HealthDataResponseTypes {
     rss?: string;
     heapUsed?: string;
   };
+}
+
+//Payment related types
+
+export interface GradeFees {
+  admissionFee: number;
+  tuitionFeeTerm1: number;
+  tuitionFeeTerm2: number;
+  examFee: number;
+  libraryLabFee: number;
+  transportFeeQuarterly: number;
+}
+
+export interface GradeConfigurationTypes {
+  gradeId: string;
+  gradeName: string;
+  fees: GradeFees;
+  appearOn?: string[];
+}
+export interface FeeStructureData {
+  academicYear: string;
+  currency: string;
+  gradeConfigurations: GradeConfigurationTypes[];
+}
+export interface AdmissionPayment {
+  currency: "INR";
+  status: "pending" | "paid" | "failed";
+  method: "UPI" | "CASH" | null;
+
+  feeItems: {
+    id: string;
+    label: string;
+    amount: number;
+  }[];
+
+  subtotal: number;
+  discount: number;
+  total: number;
+  amountPaid: number;
+
+  transaction: {
+    provider: "RAZORPAY" | null;
+    orderId: string | null;
+    paymentId: string | null;
+    reference: string | null;
+  };
+
+  collection: {
+    receivedById: string | null;
+    receivedByName: string | null;
+    receivedByRole: string | null;
+    receivedAt: string | null;
+  };
+
+  createdAt: string;
+  paidAt: string | null;
 }

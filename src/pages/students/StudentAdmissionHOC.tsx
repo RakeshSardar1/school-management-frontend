@@ -57,7 +57,7 @@ export default function StudentAdmissionHOC({
       <AdmissionFeesModalForm
         student={student}
         close={onClose}
-        // onSuccess={onNext}
+        onSuccess={onNext}
       />
     );
   }

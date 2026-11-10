@@ -24,6 +24,7 @@ const INITIAL_STUDENTS: StudentTypes[] = [
     bloodGroup: "O+",
     address: "742 Evergreen Terrace, Springfield",
     admissionDate: "2021-08-15",
+    registrationProgress: false,
   },
   {
     id: "STU-2026-002",
@@ -46,6 +47,7 @@ const INITIAL_STUDENTS: StudentTypes[] = [
     bloodGroup: "A+",
     address: "128 Beacon St, Boston, MA",
     admissionDate: "2022-01-10",
+    registrationProgress: false,
   },
   {
     id: "STU-2026-003",
@@ -58,7 +60,7 @@ const INITIAL_STUDENTS: StudentTypes[] = [
     section: "B",
     gender: "Male",
     category: "Sports Quota",
-    status: "On Leave",
+    status: "Not Active",
     guardianName: "Helena Thorne",
     guardianPhone: "+1 (555) 345-6789",
     guardianEmail: "helena.t@example.com",
@@ -68,6 +70,7 @@ const INITIAL_STUDENTS: StudentTypes[] = [
     bloodGroup: "B+",
     address: "450 Ocean Drive, Miami, FL",
     admissionDate: "2021-08-15",
+    registrationProgress: false,
   },
   {
     id: "STU-2026-004",
@@ -90,6 +93,7 @@ const INITIAL_STUDENTS: StudentTypes[] = [
     bloodGroup: "AB+",
     address: "88 Lincoln Blvd, Chicago, IL",
     admissionDate: "2023-08-20",
+    registrationProgress: false,
   },
   {
     id: "STU-2026-005",
@@ -102,7 +106,7 @@ const INITIAL_STUDENTS: StudentTypes[] = [
     section: "C",
     gender: "Male",
     category: "General",
-    status: "Overdue",
+    status: "Active",
     guardianName: "Sean O'Connor",
     guardianPhone: "+1 (555) 567-8901",
     guardianEmail: "s.oconnor@example.com",
@@ -112,6 +116,7 @@ const INITIAL_STUDENTS: StudentTypes[] = [
     bloodGroup: "O-",
     address: "12 Pinehurst Ave, Seattle, WA",
     admissionDate: "2020-09-01",
+    registrationProgress: false,
   },
   {
     id: "STU-2026-006",
@@ -134,6 +139,7 @@ const INITIAL_STUDENTS: StudentTypes[] = [
     bloodGroup: "A-",
     address: "505 Sunset Blvd, Los Angeles, CA",
     admissionDate: "2019-08-12",
+    registrationProgress: false,
   },
 ];
 type ToastType = "success" | "error" | "warning" | "info";

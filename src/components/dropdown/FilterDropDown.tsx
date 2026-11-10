@@ -57,7 +57,7 @@ export default function FilterDropDown({
           margin,
           Math.min(rect.left, window.innerWidth - rect.width - margin),
         ),
-        top: openAbove ? rect.top - gap - maxHeight : rect.bottom + gap,
+        top: openAbove ? rect.top - gap : rect.bottom + gap,
         width: Math.min(rect.width, window.innerWidth - margin * 2),
         maxHeight,
         openAbove,
@@ -153,7 +153,6 @@ export default function FilterDropDown({
                 {defaultValue}
               </div>
             )}
-
             {options.map((option) => {
               const isSelected = selectedValue === option.value;
 

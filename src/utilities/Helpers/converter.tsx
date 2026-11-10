@@ -77,3 +77,18 @@ export const getCurrentAge = (dob: string): string => {
     `${days} ${days === 1 ? "day" : "days"}`
   );
 };
+
+export const formatAmount = (value: string) => {
+  if (!value) return "";
+  const [whole, decimal] = value.split(".");
+  const formattedWhole = whole.replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+
+  return decimal === undefined
+    ? formattedWhole
+    : `${formattedWhole}.${decimal}`;
+};
+export const formatCurrency = (amount: number): string => {
+  return `₹${amount.toLocaleString("en-IN", {
+    maximumFractionDigits: 2,
+  })}`;
+};

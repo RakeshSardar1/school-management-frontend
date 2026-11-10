@@ -3,7 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 import type {
-  PipeLineLeadsTypes,
   ProgressKeysTypes,
   StageMeta,
   StudentAdmissionInProgress,
@@ -27,7 +26,7 @@ interface InitialStates {
   studentsDirectory: StudentTypes[];
   viewStudentProfile: StudentTypes | null;
   progressPipeLine: StageMeta[];
-  pipelineLeads: PipeLineLeadsTypes[];
+  pipelineLeads: StudentAdmissionInProgress[];
   admissionInProgress: StudentAdmissionInProgress[];
 }
 
@@ -236,8 +235,18 @@ const initialState: InitialStates = {
     {
       name: "Lucas Scott",
       grade: "Grade 9",
-      parent: "Karen Scott",
-      phone: "+1 555-0192",
+      parentDetails: {
+        guardianName: "Karen Scott",
+        guardianPhone: "+1 (555) 0192",
+        motherName: "Linda Scott",
+        motherPhone: "+1 (555) 0193",
+        relation: "",
+        occupation: "",
+        qualification: "",
+        annualIncome: "",
+        address: "",
+        guardianEmail: "",
+      },
       stage: "applied",
       date: "2026-10-20",
 
@@ -246,12 +255,27 @@ const initialState: InitialStates = {
       category: "General",
       dob: "2011-04-12",
       paymentStatus: false,
+      fees: undefined,
+      religion: "",
+      bloodGroup: "",
+      phone: undefined,
+      parent: undefined,
     },
     {
       name: "Maya Lin",
       grade: "Grade 10",
-      parent: "Kevin Lin",
-      phone: "+1 555-0193",
+      parentDetails: {
+        guardianName: "Kevin Lin",
+        guardianPhone: "+1 555-0193",
+        motherName: "",
+        motherPhone: "",
+        relation: "",
+        occupation: "",
+        qualification: "",
+        annualIncome: "",
+        address: "",
+        guardianEmail: "",
+      },
       stage: "doc_verification",
       date: "2026-10-21",
 
@@ -260,12 +284,27 @@ const initialState: InitialStates = {
       category: "OBC",
       dob: "2010-08-25",
       paymentStatus: false,
+      fees: undefined,
+      religion: "",
+      bloodGroup: "",
+      phone: undefined,
+      parent: undefined,
     },
     {
       name: "Ethan Harper",
       grade: "Grade 11",
-      parent: "Sarah Harper",
-      phone: "+1 555-0194",
+      parentDetails: {
+        guardianName: "Sarah Harper",
+        guardianPhone: "+1 555-0194",
+        motherName: "",
+        motherPhone: "",
+        relation: "",
+        occupation: "",
+        qualification: "",
+        annualIncome: "",
+        address: "",
+        guardianEmail: "",
+      },
       stage: "entrance_test",
       date: "2026-10-18",
 
@@ -274,12 +313,27 @@ const initialState: InitialStates = {
       category: "General",
       dob: "2009-11-03",
       paymentStatus: false,
+      fees: undefined,
+      religion: "",
+      bloodGroup: "",
+      phone: undefined,
+      parent: undefined,
     },
     {
       name: "Isabella Rossi",
       grade: "Grade 9",
-      parent: "Marco Rossi",
-      phone: "+1 555-0195",
+      parentDetails: {
+        guardianName: "Marco Rossi",
+        guardianPhone: "+1 555-0195",
+        motherName: "",
+        motherPhone: "",
+        relation: "",
+        occupation: "",
+        qualification: "",
+        annualIncome: "",
+        address: "",
+        guardianEmail: "",
+      },
       stage: "fee_paid",
       date: "2026-10-22",
 
@@ -288,12 +342,27 @@ const initialState: InitialStates = {
       category: "SC/ST",
       dob: "2011-02-14",
       paymentStatus: false,
+      fees: undefined,
+      religion: "",
+      bloodGroup: "",
+      phone: undefined,
+      parent: undefined,
     },
     {
       name: "Gabriel Santos",
       grade: "Grade 12",
-      parent: "Maria Santos",
-      phone: "+1 555-0196",
+      parentDetails: {
+        guardianName: "Maria Santos",
+        guardianPhone: "+1 555-0196",
+        motherName: "",
+        motherPhone: "",
+        relation: "",
+        occupation: "",
+        qualification: "",
+        annualIncome: "",
+        address: "",
+        guardianEmail: "",
+      },
       stage: "enrolled",
       date: "2026-10-15",
 
@@ -302,6 +371,11 @@ const initialState: InitialStates = {
       category: "General",
       dob: "2008-06-30",
       paymentStatus: true,
+      fees: 70000,
+      religion: "",
+      bloodGroup: "",
+      phone: undefined,
+      parent: undefined,
     },
   ],
   admissionInProgress: [],
@@ -329,6 +403,12 @@ const StudentReducer = createSlice({
 
       if (newStudent) {
         state.admissionInProgress.push(newStudent);
+        state.pipelineLeads.push({
+          ...newStudent,
+          stage: "applied",
+          date: new Date().toISOString().split("T")[0],
+          fees: undefined,
+        });
       }
     },
     movePipelineStage: (

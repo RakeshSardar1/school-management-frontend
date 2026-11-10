@@ -102,18 +102,18 @@ export const RELIGIONS_DATA = [
 ];
 
 export const GRADES_DATA = [
-  "Grader 1",
-  "Grader 2",
-  "Grader 3",
-  "Grader 4",
-  "Grader 5",
-  "Grader 6",
-  "Grader 7",
-  "Grader 8",
-  "Grader 9",
-  "Grader 10",
-  "Grader 11",
-  "Grader 12",
+  "Grade 1",
+  "Grade 2",
+  "Grade 3",
+  "Grade 4",
+  "Grade 5",
+  "Grade 6",
+  "Grade 7",
+  "Grade 8",
+  "Grade 9",
+  "Grade 10",
+  "Grade 11",
+  "Grade 12",
 ];
 
 export const SECTIONS_DATA = [
@@ -450,3 +450,15 @@ export const ApiEndpoints = {
   CREATE_ORDER: "/payment/create-order",
   VERIFY_PAYMENT: "/payment/verify-payment",
 } as const;
+
+export const FEE_LABELS = {
+  tuitionFeeTerm1: { label: "Tuition Fee (Term 1)", category: "recurring" },
+  tuitionFeeTerm2: { label: "Tuition Fee (Term 2)", category: "recurring" },
+  admissionFee: { label: "Admission Fee (One-time)", category: "one_time" },
+  libraryLabFee: { label: "Library & Lab Fee", category: "recurring" },
+  examFee: { label: "Examination Fee", category: "recurring" },
+  transportFeeQuarterly: {
+    label: "Transport Fee (Quarterly)",
+    category: "optional",
+  },
+};

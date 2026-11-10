@@ -11,6 +11,7 @@ import type {
 
 import StudentAdmissionHOC from "../StudentAdmissionHOC";
 import { ProgressKeys } from "../../../redux/ConstantCommon";
+import { formatCurrency } from "../../../utilities/Helpers/converter";
 
 interface SelectedAdvanced {
   lead: PipeLineLeadsTypes;
@@ -39,7 +40,7 @@ const StudentPipeline = () => {
         acc[lead.stage].push(lead);
         return acc;
       },
-      {} as Record<string, PipeLineLeadsTypes[]>,
+      {} as Record<string, (typeof pipelineLeads)[number][]>,
     );
   }, [pipelineLeads]);
 
@@ -133,11 +134,14 @@ const StudentPipeline = () => {
                           {lead.grade}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-500">
-                        Parent: {lead.parent}
-                      </p>
+                      <p className="text-xs text-slate-500">{lead.parent}</p>
                       <p className="text-[11px] font-mono text-slate-400">
-                        {lead.phone}
+                        {stage.key === "enrolled"
+                          ? typeof lead.fees === "number" &&
+                            Number.isFinite(lead.fees)
+                            ? " Paid: " + formatCurrency(lead.fees)
+                            : "Fee amount unavailable"
+                          : lead.parentDetails?.guardianPhone}
                       </p>
 
                       <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
@@ -180,7 +184,7 @@ const StudentPipeline = () => {
                             {stage.key == "enrolled" && (
                               <>
                                 <span className="text-[10px] text-slate-400">
-                                  Paid on:
+                                  On:
                                 </span>
                               </>
                             )}
@@ -214,7 +218,12 @@ const StudentPipeline = () => {
                             </button>
                           ) : (
                             <button
-                              onClick={() => handleAdvanceStage(lead, stage)}
+                              onClick={() =>
+                                handleAdvanceStage(
+                                  lead as PipeLineLeadsTypes,
+                                  stage,
+                                )
+                              }
                               className="p-1 cursor-pointer bg-blue-50 text-blue-600 rounded hover:bg-blue-100 text-[10px] font-bold"
                             >
                               {stage.key === "fee_paid" && !lead.paymentStatus

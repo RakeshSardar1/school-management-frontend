@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import type { PipeLineLeadsTypes } from "../../../utilities/types";
 import { QrGenerate } from "../../../components";
 import { useAppSelector } from "../../../redux/ReduxHooks";
+import { formatAmount } from "../../../utilities/Helpers/converter";
 
 interface FeePaymentModalProps {
   student: PipeLineLeadsTypes;
   close: () => void;
-  // onSuccess: () => void;
+  onSuccess: () => void;
 }
+
+// If you have the exact type, import it and use it here, e.g.:
+// type PaymentLevelKey = keyof GradeFees;
 
 const AdmissionFeesModalForm: React.FC<FeePaymentModalProps> = ({
   student,
@@ -16,36 +20,79 @@ const AdmissionFeesModalForm: React.FC<FeePaymentModalProps> = ({
 }) => {
   const [paymentMethod, setPaymentMethod] = useState<"UPI" | "CASH">("UPI");
   const [isProcessing, setIsProcessing] = useState(false);
-  const [discountInput, setDiscountInput] = useState<string>("0");
+  const [discountInput, setDiscountInput] = useState<string>("");
   const [cashConfirmed, setCashConfirmed] = useState(false);
 
   const authUser = useAppSelector((state) => state.auth.user);
+  const { gradeConfigurations, paymentLevels } = useAppSelector(
+    (state) => state.payment,
+  );
 
-  const canAcceptCash =
-    authUser === "super_admin" ||
-    authUser === "admin" ||
-    authUser === "management" ||
-    authUser === "principal" ||
-    authUser === "accountant";
+  const filteredPaymentLevels = useMemo(
+    () =>
+      Object.keys(paymentLevels).filter((key) =>
+        paymentLevels[key].appearOn.includes("admission"),
+      ),
+    [paymentLevels],
+  );
+
+  const canAcceptCash = useMemo(() => {
+    return [
+      "super_admin",
+      "admin",
+      "management",
+      "principal",
+      "accountant",
+    ].includes(authUser || "");
+  }, [authUser]);
 
   const closeModal = () => {
     if (isProcessing) return;
     close();
   };
 
-  // Mock Fee Breakdown Data
-  const feeDetails = {
-    items: [
-      { label: "Tuition Fee (Term 1)", amount: 15000 },
-      { label: "Admission Fee (One-time)", amount: 5000 },
-      { label: "Library & Lab Fee", amount: 2500 },
-      { label: "Transport Fee (Quarterly)", amount: 3500 },
-    ],
-  };
+  // 1. Memoize Grade Config lookup
+  const gradeConfig = useMemo(() => {
+    return gradeConfigurations.find(
+      (config) => config.gradeName === student.grade,
+    );
+  }, [gradeConfigurations, student.grade]);
 
-  const subtotal = feeDetails.items.reduce((acc, item) => acc + item.amount, 0);
-  const numericDiscount = Number(discountInput) || 0;
-  const total = Math.max(0, subtotal - numericDiscount);
+  // 2. Memoize Subtotal calculation (Only sum up active payment levels, NOT all fees)
+  const subtotal = useMemo(() => {
+    if (!gradeConfig || !filteredPaymentLevels) return null;
+
+    // Loop through the active paymentLevels object and sum only those amounts
+    return filteredPaymentLevels.reduce((sum, key) => {
+      const feeValue =
+        gradeConfig.fees[key as keyof typeof gradeConfig.fees] || 0;
+      return sum + feeValue;
+    }, 0);
+  }, [gradeConfig, filteredPaymentLevels]);
+
+  // 3. Robust Discount Calculation
+  const numericDiscount = useMemo(() => {
+    const parsed = Number(discountInput);
+    if (isNaN(parsed) || parsed < 0) return 0;
+    // Ensure discount doesn't exceed subtotal
+    return subtotal ? Math.min(parsed, subtotal) : 0;
+  }, [discountInput, subtotal]);
+
+  const total = Math.max(0, (subtotal || 0) - numericDiscount);
+  const enteredDiscount =
+    discountInput.trim() === "" ? 0 : Number(discountInput);
+
+  const discountError =
+    subtotal === null
+      ? "Fee configuration is unavailable."
+      : !Number.isFinite(enteredDiscount) || enteredDiscount < 0
+        ? "Enter a valid discount amount."
+        : enteredDiscount > subtotal
+          ? "Discount cannot be greater than the fees."
+          : "";
+
+  const discountPercentage =
+    subtotal !== null && subtotal > 0 ? (numericDiscount / subtotal) * 100 : 0;
 
   const handlePay = (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,6 +106,7 @@ const AdmissionFeesModalForm: React.FC<FeePaymentModalProps> = ({
     }
 
     setIsProcessing(true);
+    // Simulate API call
     setTimeout(() => {
       setIsProcessing(false);
       onSuccess();
@@ -88,9 +136,7 @@ const AdmissionFeesModalForm: React.FC<FeePaymentModalProps> = ({
           <button
             type="button"
             onClick={closeModal}
-            disabled={
-              isProcessing || paymentMethod !== "CASH" || !cashConfirmed
-            }
+            disabled={isProcessing}
             className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-full transition-colors cursor-pointer disabled:opacity-50"
           >
             <svg
@@ -109,13 +155,13 @@ const AdmissionFeesModalForm: React.FC<FeePaymentModalProps> = ({
           </button>
         </div>
 
-        {/* Form Body - 2 Column Grid Layout (Compact) */}
+        {/* Form Body */}
         <form
           id="fee-payment-form"
           onSubmit={handlePay}
           className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-5"
         >
-          {/* LEFT COLUMN: Breakdown & Discount */}
+          {/* LEFT COLUMN */}
           <div className="space-y-4">
             {/* Fee Breakdown */}
             <div className="space-y-2">
@@ -123,47 +169,127 @@ const AdmissionFeesModalForm: React.FC<FeePaymentModalProps> = ({
                 Fee Breakdown
               </h3>
               <div className="space-y-1.5">
-                {feeDetails.items.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center justify-between text-xs"
-                  >
-                    <span className="text-slate-600">{item.label}</span>
-                    <span className="font-semibold text-slate-800">
-                      ₹{item.amount.toLocaleString("en-IN")}
-                    </span>
-                  </div>
-                ))}
+                {gradeConfig &&
+                  filteredPaymentLevels.map((item) => {
+                    const feeAmount =
+                      gradeConfig.fees[item as keyof typeof gradeConfig.fees] ??
+                      0;
+
+                    return (
+                      <div
+                        key={item}
+                        className="flex items-center justify-between text-xs"
+                      >
+                        <span className="text-slate-600">
+                          {paymentLevels[item].label}
+                        </span>
+                        <span className="font-semibold text-slate-800">
+                          ₹{feeAmount.toLocaleString("en-IN")}
+                        </span>
+                      </div>
+                    );
+                  })}
               </div>
             </div>
 
-            {/* Optional Discount Input */}
-            <div className="space-y-1 bg-emerald-50/50 p-2.5 rounded-lg border border-emerald-100">
-              <label className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider flex items-center justify-between">
+            {/* Discount Input */}
+            {/* Discount Input */}
+            <div
+              className={`space-y-1 rounded-lg border p-2.5 ${
+                discountPercentage > 30
+                  ? "border-red-200 bg-red-50"
+                  : discountPercentage > 10
+                    ? "border-orange-200 bg-orange-50"
+                    : "border-emerald-100 bg-emerald-50/50"
+              }`}
+            >
+              <label
+                htmlFor="discount"
+                className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-700"
+              >
                 <span>Discount (₹)</span>
-                <span className="text-[9px] text-emerald-600/70 font-medium normal-case tracking-normal">
-                  Optional
+                <span
+                  aria-invalid={Boolean(discountError)}
+                  aria-describedby={
+                    discountError ? "discount-error" : undefined
+                  }
+                  className={`rounded-full px-2 py-0.5 text-[10px] font-semibold normal-case ${
+                    discountPercentage > 30
+                      ? "bg-red-100 text-red-700"
+                      : discountPercentage > 10
+                        ? "bg-orange-100 text-orange-700"
+                        : "bg-emerald-100 text-emerald-700"
+                  }`}
+                >
+                  {discountPercentage.toFixed(2)}% discount
                 </span>
               </label>
+
               <input
-                type="number"
-                value={discountInput}
+                id="discount"
+                type="text"
+                value={formatAmount(discountInput)}
+                inputMode="decimal"
                 onChange={(e) => {
-                  setDiscountInput(e.target.value);
+                  const value = e.target.value.replace(/,/g, "");
+
+                  // Allow digits and up to two decimal places.
+                  if (!/^\d*(?:\.\d{0,2})?$/.test(value)) return;
+
+                  setDiscountInput(value);
                   setCashConfirmed(false);
                 }}
+                aria-invalid={Boolean(discountError)}
+                aria-describedby={discountError ? "discount-error" : undefined}
                 min="0"
-                max={subtotal}
+                max={subtotal ?? 0}
                 placeholder="0"
-                className="w-full px-2.5 py-1.5 bg-white border border-emerald-200 rounded-md text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                className={`w-full rounded-md border bg-white px-2.5 py-1.5 text-xs text-slate-800 outline-none transition focus:ring-1 ${
+                  discountPercentage > 30
+                    ? "border-red-400 focus:border-red-500 focus:ring-red-500"
+                    : discountPercentage > 10
+                      ? "border-orange-400 focus:border-orange-500 focus:ring-orange-500"
+                      : "border-emerald-200 focus:border-emerald-500 focus:ring-emerald-500"
+                }`}
               />
-            </div>
+              {discountError && (
+                <p
+                  id="discount-error"
+                  role="alert"
+                  className="text-[10px] font-medium text-red-700"
+                >
+                  {discountError}
+                </p>
+              )}
 
+              {discountPercentage > 50 && discountPercentage < 100 && (
+                <p className="text-[10px] font-medium text-red-700">
+                  Are you sure? High discount: more than 50%.
+                </p>
+              )}
+
+              {discountPercentage > 30 && discountPercentage <= 50 && (
+                <p className="text-[10px] font-medium text-red-700">
+                  High discount: more than 30%.
+                </p>
+              )}
+              {discountPercentage > 10 && discountPercentage <= 30 && (
+                <p className="text-[10px] font-medium text-orange-700">
+                  Discount is more than 10%.
+                </p>
+              )}
+            </div>
             {/* Total Summary */}
             <div className="space-y-1.5 bg-slate-50 p-3 rounded-lg border border-slate-200">
               <div className="flex items-center justify-between text-[11px] text-slate-600">
                 <span>Subtotal</span>
-                <span>₹{subtotal.toLocaleString("en-IN")}</span>
+                {subtotal === null ? (
+                  <span className="text-red-500 text-[9px]">
+                    Grade config not found
+                  </span>
+                ) : (
+                  <span>₹{subtotal.toLocaleString("en-IN")}</span>
+                )}
               </div>
               <div className="flex items-center justify-between text-[11px] text-emerald-600 font-medium">
                 <span>Discount</span>
@@ -178,7 +304,7 @@ const AdmissionFeesModalForm: React.FC<FeePaymentModalProps> = ({
             </div>
           </div>
 
-          {/* RIGHT COLUMN: Payment Methods & Inputs */}
+          {/* RIGHT COLUMN */}
           <div className="space-y-4">
             {/* Payment Methods */}
             <div className="space-y-2">
@@ -207,14 +333,14 @@ const AdmissionFeesModalForm: React.FC<FeePaymentModalProps> = ({
                       className="sr-only"
                     />
                     <span className="text-[10px] font-bold uppercase leading-tight">
-                      {method === "UPI" ? "UPI" : method}
+                      {method}
                     </span>
                   </label>
                 ))}
               </div>
             </div>
 
-            {/* Dynamic Input Fields based on Payment Method */}
+            {/* Dynamic Input Fields */}
             <div className="space-y-3">
               {paymentMethod === "UPI" && <QrGenerate total={total} />}
 

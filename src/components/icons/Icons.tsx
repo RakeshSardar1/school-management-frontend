@@ -1,4 +1,3 @@
-import { IdCardLanyard } from "lucide-react";
 import {
   Building2,
   Wallet,

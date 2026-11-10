@@ -2,6 +2,7 @@ import { combineReducers } from "@reduxjs/toolkit";
 import {
   CommonSlice,
   ModalReducer,
+  PaymentReducers,
   StudentReducer,
   StudentToastReducer,
 } from "./reducers";
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
   filter: filters,
   toast: StudentToastReducer,
   modal: ModalReducer,
+  payment: PaymentReducers,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

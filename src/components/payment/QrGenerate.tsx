@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { QRCodeSVG } from "qrcode.react";
+import { formatCurrency } from "../../utilities/Helpers/converter";
 
 interface QrGenerateProps {
   total: number;
@@ -37,7 +38,7 @@ const QrGenerate = ({ total }: QrGenerateProps) => {
   return (
     <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
       <p className="text-xs font-semibold text-slate-700">
-        UPI payment: ₹{total.toFixed(2)}
+        UPI payment: {formatCurrency(total)}
       </p>
 
       <p className="text-xs text-slate-500">

@@ -217,7 +217,7 @@ const StudentRegistrationStep: React.FC<StudentTypesProps> = ({
           value={religion}
         />
       </div>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid relative grid-cols-3 gap-3">
         <FilterDropDown
           label="Target Grade"
           options={formatOptions(GRADES_DATA)}
